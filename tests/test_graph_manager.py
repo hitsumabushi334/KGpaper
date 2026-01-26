@@ -62,7 +62,7 @@ def test_delete_paper(graph_manager):
     graph_manager.delete_paper("urn:uuid:123")
     
     # Verify empty
-    q = "SELECT ?title WHERE { ?s dl:paperTitle ?title }"
+    q = "SELECT ?title WHERE { ?s kg:paperTitle ?title }"
     assert len(list(graph_manager.g.query(q))) == 0
     
     # Verify triples are gone
