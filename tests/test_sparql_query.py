@@ -187,7 +187,7 @@ class TestSparqlQueryExportAllTriples:
     """SparqlQuery.export_all_triples のテスト"""
 
     def test_export_all_triples(self, graph_with_data):
-        """全トリプルエクスポートのテスト（現在は pass 実装）"""
+        """全トリプルエクスポートのテスト(現在は pass 実装)"""
         sq = SparqlQuery(graph_with_data)
         
         # 現在の実装は pass なので None を返す

@@ -34,13 +34,17 @@ else:
 st.markdown("---")
 st.subheader("Danger Zone")
 
-if st.button("Clear All Data", type="primary"):
-    # Confirmation dialog workaround
-    if "confirm_clear" not in st.session_state:
-        st.session_state.confirm_clear = True
-        st.warning("Are you sure? This will delete all knowledge graph data. Click again to confirm.")
-    else:
-        gm.clear_all()
-        st.success("All data cleared.")
-        del st.session_state.confirm_clear
-        st.rerun()
+col1, col2 = st.columns([1, 3])
+with col1:
+    if st.button("Clear All Data", type="primary"):
+        st.session_state.show_clear_confirm = True
+
+with col2:
+    if st.session_state.get("show_clear_confirm", False):
+        confirm = st.checkbox("I confirm deletion of all data", key="confirm_clear_now")
+        if confirm:
+            gm.clear_all()
+            st.success("All data cleared.")
+            st.session_state.pop("show_clear_confirm", None)
+            st.session_state.pop("confirm_clear_now", None)
+            st.rerun()

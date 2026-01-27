@@ -26,12 +26,14 @@ content_type = st.sidebar.selectbox("Content Type", ["All", "method", "result", 
 
 if st.sidebar.button("Search", type="primary"):
     doc_type_filter = document_type if document_type != "All" else None
+    experiment_type_filter = experiment_type if experiment_type != "All" else None
+    content_type_filter = content_type if content_type != "All" else None
     
     results = sq.search(
         paper_title=paper_title,
         document_type=doc_type_filter,
-        experiment_type=experiment_type,
-        content_type=content_type
+        experiment_type=experiment_type_filter,
+        content_type=content_type_filter
     )
     
     if not results:
@@ -137,7 +139,7 @@ if st.sidebar.button("Search", type="primary"):
                 }
             },
             {
-                "selector": f"node[type='Paper']",
+                "selector": "node[type='Paper']",
                 "style": {"width": 50, "height": 50, "font-size": 12}
             }
         ]
@@ -152,20 +154,9 @@ if st.sidebar.button("Search", type="primary"):
         
         # Export
         st.subheader("Export")
-        export_format = st.radio("Format", ["JSON-LD", "Turtle"])
+        export_format = st.radio("Format", ["JSON-LD"])
         if st.button("Download Graph"):
-            # This exports the FILTERED subgraph? Or full? 
-            # Plan says "Export results". Ideally export selected subgraph.
-            # For simplicity, we can let graph_manager export FULL graph, 
-            # or serialize the filtered triples.
-            # Let's export full graph for now via GraphManager, 
-            # or maybe user wants just what they see.
-            # Implementing full graph export is safer/easier found on Manager page or here.
-            # But here implies the filtered view.
-            # Constructing a graph from filtered results is possible but tricky without all properties.
-            # Let's fallback to exporting the whole graph or list of JSON.
-            
-            # Exporting the list of results as JSON
+            # フィルタ結果をJSONとしてエクスポート
             json_str = json.dumps(results, indent=2, ensure_ascii=False)
             st.download_button(
                 label="Download Filtered Results (JSON)",

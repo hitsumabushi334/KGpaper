@@ -33,3 +33,4 @@ ENV/
 
 # Local configuration
 config.yaml
+/data

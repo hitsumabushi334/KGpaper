@@ -6,10 +6,10 @@ class SparqlQuery:
         self.g = graph
 
     def search(self, 
-               paper_title: str = None, 
-               document_type: str = None, 
-               experiment_type: str = None, 
-               content_type: str = None):
+               paper_title: str | None = None, 
+               document_type: str | None = None, 
+               experiment_type: str | None = None, 
+               content_type: str | None = None):
         """
         Executes a SPARQL query with optional filters.
         Returns a list of dicts with result data.
@@ -53,7 +53,7 @@ class SparqlQuery:
         }}
         """
         
-        results = self.g.query(query)
+        results = self.g.query(query, initNs=PREFIXES)
         
         data = []
         for row in results:

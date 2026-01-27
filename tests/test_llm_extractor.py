@@ -132,7 +132,7 @@ class TestLLMExtractorUploadFile:
     """LLMExtractor.upload_file のテスト"""
 
     def test_upload_file_success_active(self, tmp_path, monkeypatch, capsys):
-        """ファイルアップロード成功（すぐにACTIVE状態）のテスト"""
+        """ファイルアップロード成功(すぐにACTIVE状態)のテスト"""
         config_file = tmp_path / "config.yaml"
         config_file.write_text("""
 gemini:
@@ -167,7 +167,7 @@ storage:
             assert "Uploaded file: test-file-name" in captured.out
 
     def test_upload_file_processing_then_active(self, tmp_path, monkeypatch, capsys):
-        """ファイルアップロード中にPROCESSING状態からACTIVEに遷移するテスト"""
+        """ファイルアップロード中(PROCESSING→ACTIVE遷移)のテスト"""
         config_file = tmp_path / "config.yaml"
         config_file.write_text("""
 gemini:
@@ -214,7 +214,7 @@ storage:
                 assert "Processing file..." in captured.out
 
     def test_upload_file_failed_state(self, tmp_path, monkeypatch):
-        """ファイルアップロード失敗（FAILED状態）のテスト"""
+        """ファイルアップロード失敗(FAILED状態)のテスト"""
         config_file = tmp_path / "config.yaml"
         config_file.write_text("""
 gemini:

@@ -1,0 +1,308 @@
+{
+  "@context": {
+    "schema": "https://schema.org/",
+    "dcterms": "http://purl.org/dc/terms/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "ex": "https://example.org/kg#",
+
+    "id": "@id",
+    "type": "@type",
+
+    "name": "schema:name",
+    "description": "schema:description",
+    "url": "schema:url",
+    "dateCreated": { "@id": "schema:dateCreated", "@type": "xsd:date" },
+    "datePublished": { "@id": "schema:datePublished", "@type": "xsd:date" },
+
+    "author": { "@id": "schema:author", "@type": "@id" },
+    "affiliation": { "@id": "schema:affiliation", "@type": "@id" },
+    "memberOf": { "@id": "schema:memberOf", "@type": "@id" },
+
+    "about": { "@id": "schema:about", "@type": "@id" },
+    "keywords": { "@id": "schema:keywords", "@container": "@list" },
+
+    "hasPart": { "@id": "schema:hasPart", "@type": "@id" },
+    "isPartOf": { "@id": "schema:isPartOf", "@type": "@id" },
+
+    "citation": { "@id": "schema:citation", "@type": "@id" },
+
+    "used": { "@id": "prov:used", "@type": "@id" },
+    "wasGeneratedBy": { "@id": "prov:wasGeneratedBy", "@type": "@id" },
+    "wasDerivedFrom": { "@id": "prov:wasDerivedFrom", "@type": "@id" },
+
+    "result": { "@id": "schema:result", "@type": "@id" },
+    "variableMeasured": { "@id": "schema:variableMeasured", "@type": "@id" },
+
+    "unitText": "schema:unitText",
+    "value": "schema:value",
+    "measurementTechnique": "schema:measurementTechnique",
+
+    "geo": "schema:geo",
+    "latitude": { "@id": "schema:latitude", "@type": "xsd:decimal" },
+    "longitude": { "@id": "schema:longitude", "@type": "xsd:decimal" },
+
+    "sameAs": { "@id": "schema:sameAs", "@type": "@id" },
+
+    "language": "schema:inLanguage",
+    "text_ja": { "@id": "schema:text", "@language": "ja" },
+    "text_en": { "@id": "schema:text", "@language": "en" }
+  },
+  "@graph": [
+    {
+      "id": "ex:Org_A",
+      "type": "schema:Organization",
+      "name": "A Laboratory",
+      "url": "https://example.org/org/a",
+      "geo": {
+        "type": "schema:GeoCoordinates",
+        "latitude": 35.1709,
+        "longitude": 136.8815
+      }
+    },
+    {
+      "id": "ex:Org_B",
+      "type": "schema:Organization",
+      "name": "B Research Center",
+      "url": "https://example.org/org/b"
+    },
+
+    {
+      "id": "ex:Person_1",
+      "type": "schema:Person",
+      "name": "Shota Ishida",
+      "affiliation": "ex:Org_A"
+    },
+    {
+      "id": "ex:Person_2",
+      "type": "schema:Person",
+      "name": "M. Tanaka",
+      "affiliation": "ex:Org_A"
+    },
+    {
+      "id": "ex:Person_3",
+      "type": "schema:Person",
+      "name": "K. Suzuki",
+      "affiliation": "ex:Org_B"
+    },
+
+    {
+      "id": "ex:Project_KGVis",
+      "type": "schema:Project",
+      "name": "KG Visualization Testbed",
+      "description": "A small but heterogeneous knowledge graph for visualization testing.",
+      "dateCreated": "2026-01-27",
+      "memberOf": "ex:Org_A",
+      "hasPart": [
+        "ex:Paper_1",
+        "ex:Paper_2",
+        "ex:Experiment_1",
+        "ex:Experiment_2",
+        "ex:Dataset_1",
+        "ex:Software_1"
+      ],
+      "keywords": [
+        "knowledge graph",
+        "JSON-LD",
+        "visualization",
+        "provenance",
+        "chemistry"
+      ]
+    },
+
+    {
+      "id": "ex:Paper_1",
+      "type": "schema:ScholarlyArticle",
+      "name": "Graph-centric Experiment Tracking with JSON-LD",
+      "author": ["ex:Person_1", "ex:Person_2"],
+      "datePublished": "2025-11-15",
+      "about": [
+        "ex:Concept_JSONLD",
+        "ex:Concept_Provenance",
+        "ex:Concept_Electrochemistry"
+      ],
+      "citation": ["ex:Paper_2"],
+      "keywords": ["JSON-LD", "PROV-O", "ELN", "traceability"],
+      "description": "Demonstrates how experimental metadata can be represented as linked data."
+    },
+    {
+      "id": "ex:Paper_2",
+      "type": "schema:ScholarlyArticle",
+      "name": "A Minimal Ontology for Lab Experiments",
+      "author": ["ex:Person_3"],
+      "datePublished": "2024-06-01",
+      "about": ["ex:Concept_Ontology", "ex:Concept_Provenance"],
+      "keywords": ["ontology", "metadata", "laboratory"]
+    },
+
+    {
+      "id": "ex:Concept_JSONLD",
+      "type": "schema:DefinedTerm",
+      "name": "JSON-LD",
+      "sameAs": "https://www.w3.org/TR/json-ld11/"
+    },
+    {
+      "id": "ex:Concept_Provenance",
+      "type": "schema:DefinedTerm",
+      "name": "Provenance",
+      "sameAs": "http://www.w3.org/ns/prov#"
+    },
+    {
+      "id": "ex:Concept_Ontology",
+      "type": "schema:DefinedTerm",
+      "name": "Ontology"
+    },
+    {
+      "id": "ex:Concept_Electrochemistry",
+      "type": "schema:DefinedTerm",
+      "name": "Electrochemistry"
+    },
+
+    {
+      "id": "ex:Software_1",
+      "type": "schema:SoftwareApplication",
+      "name": "KG Viewer Prototype",
+      "url": "https://example.org/software/kg-viewer",
+      "description": "A prototype viewer that renders nodes/edges with filters.",
+      "wasDerivedFrom": "ex:Project_KGVis"
+    },
+
+    {
+      "id": "ex:Instrument_Potentiostat",
+      "type": "schema:Thing",
+      "name": "Potentiostat",
+      "description": "Instrument used for electrochemical measurements."
+    },
+    {
+      "id": "ex:Instrument_UVVis",
+      "type": "schema:Thing",
+      "name": "UV-Vis Spectrometer",
+      "description": "Instrument used for absorbance spectra."
+    },
+
+    {
+      "id": "ex:Material_Electrode_1",
+      "type": "schema:Product",
+      "name": "ITO Glass Electrode",
+      "description": "Indium tin oxide coated glass substrate."
+    },
+    {
+      "id": "ex:Material_Catalyst_1",
+      "type": "schema:ChemicalSubstance",
+      "name": "Catalyst X",
+      "description": "Placeholder catalyst for visualization testing."
+    },
+    {
+      "id": "ex:Material_Redox_1",
+      "type": "schema:ChemicalSubstance",
+      "name": "I−/I3− Redox Couple",
+      "description": "A redox mediator entity (modeled as a substance for simplicity)."
+    },
+
+    {
+      "id": "ex:Experiment_1",
+      "type": "ex:Experiment",
+      "name": "Exp-001: Anodic Oxidation Screening",
+      "description": "Screens catalyst and redox mediator under fixed conditions.",
+      "dateCreated": "2026-01-10",
+      "wasGeneratedBy": "ex:Project_KGVis",
+      "used": [
+        "ex:Instrument_Potentiostat",
+        "ex:Material_Electrode_1",
+        "ex:Material_Catalyst_1",
+        "ex:Material_Redox_1"
+      ],
+      "hasPart": ["ex:Run_1A", "ex:Run_1B"],
+      "result": ["ex:Dataset_1"]
+    },
+    {
+      "id": "ex:Experiment_2",
+      "type": "ex:Experiment",
+      "name": "Exp-002: UV-Vis Stability Check",
+      "description": "Measures spectral changes of mediator before/after electrolysis.",
+      "dateCreated": "2026-01-12",
+      "used": ["ex:Instrument_UVVis", "ex:Material_Redox_1"],
+      "result": ["ex:Dataset_2"],
+      "citation": "ex:Paper_1"
+    },
+
+    {
+      "id": "ex:Run_1A",
+      "type": "ex:ExperimentalRun",
+      "name": "Run-1A",
+      "isPartOf": "ex:Experiment_1",
+      "used": ["ex:Material_Catalyst_1", "ex:Material_Redox_1"],
+      "variableMeasured": ["ex:Meas_Eox_1A", "ex:Meas_J_1A"]
+    },
+    {
+      "id": "ex:Run_1B",
+      "type": "ex:ExperimentalRun",
+      "name": "Run-1B",
+      "isPartOf": "ex:Experiment_1",
+      "used": ["ex:Material_Redox_1"],
+      "variableMeasured": ["ex:Meas_Eox_1B", "ex:Meas_J_1B"]
+    },
+
+    {
+      "id": "ex:Meas_Eox_1A",
+      "type": "schema:PropertyValue",
+      "name": "Oxidation onset potential",
+      "value": 0.41,
+      "unitText": "V vs NHE",
+      "measurementTechnique": "Linear sweep voltammetry"
+    },
+    {
+      "id": "ex:Meas_J_1A",
+      "type": "schema:PropertyValue",
+      "name": "Current density at 0.50 V",
+      "value": 1.8,
+      "unitText": "mA/cm^2",
+      "measurementTechnique": "Chronoamperometry"
+    },
+    {
+      "id": "ex:Meas_Eox_1B",
+      "type": "schema:PropertyValue",
+      "name": "Oxidation onset potential",
+      "value": 0.48,
+      "unitText": "V vs NHE",
+      "measurementTechnique": "Linear sweep voltammetry"
+    },
+    {
+      "id": "ex:Meas_J_1B",
+      "type": "schema:PropertyValue",
+      "name": "Current density at 0.50 V",
+      "value": 0.9,
+      "unitText": "mA/cm^2",
+      "measurementTechnique": "Chronoamperometry"
+    },
+
+    {
+      "id": "ex:Dataset_1",
+      "type": "schema:Dataset",
+      "name": "Dataset: Electrochem Screening (Exp-001)",
+      "description": "Tabular results for runs, potentials, and current densities.",
+      "wasGeneratedBy": "ex:Experiment_1",
+      "keywords": ["electrochemistry", "screening", "LSV", "CA"]
+    },
+    {
+      "id": "ex:Dataset_2",
+      "type": "schema:Dataset",
+      "name": "Dataset: UV-Vis Stability (Exp-002)",
+      "description": "Absorbance spectra before/after electrolysis (mock).",
+      "wasGeneratedBy": "ex:Experiment_2",
+      "keywords": ["UV-Vis", "stability", "spectra"]
+    },
+
+    {
+      "id": "ex:Note_1",
+      "type": "schema:CreativeWork",
+      "name": "Lab Note",
+      "language": "ja",
+      "text_ja": "触媒Xを入れると立ち上がり電位が低下し、電流密度が増加した。",
+      "text_en": "With Catalyst X, the onset potential decreased and current density increased.",
+      "@reverse": {
+        "isPartOf": "ex:Project_KGVis"
+      }
+    }
+  ]
+}
