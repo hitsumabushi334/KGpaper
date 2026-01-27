@@ -121,7 +121,7 @@ class TestSparqlQuerySearch:
         """実験タイプでフィルタ検索するテスト"""
         sq = SparqlQuery(graph_with_data)
         
-        results = sq.search(experiment_type="Synthesis")
+        results = sq.search(experiment_type="kg:Synthesis")
         
         assert len(results) == 1
         assert "Synthesis" in results[0]["experiment_type"]
@@ -194,3 +194,56 @@ class TestSparqlQueryExportAllTriples:
         result = sq.export_all_triples()
         
         assert result is None
+
+
+class TestSparqlQueryEscape:
+    """SPARQLエスケープ機能のテスト"""
+
+    def test_escape_double_quotes(self, graph_with_data):
+        """ダブルクォートを含むタイトル検索がエラーにならないテスト"""
+        sq = SparqlQuery(graph_with_data)
+        
+        # ダブルクォートを含む検索でもエラーにならないこと
+        results = sq.search(paper_title='Test "quoted" title')
+        
+        # 結果は0件でも良いが、エラーが発生しないことが重要
+        assert isinstance(results, list)
+
+    def test_escape_backslashes(self, graph_with_data):
+        """バックスラッシュを含むタイトル検索がエラーにならないテスト"""
+        sq = SparqlQuery(graph_with_data)
+        
+        results = sq.search(paper_title='C:\\path\\to\\file')
+        
+        assert isinstance(results, list)
+
+    def test_escape_special_chars_combined(self, graph_with_data):
+        """複数の特殊文字を含むタイトル検索がエラーにならないテスト"""
+        sq = SparqlQuery(graph_with_data)
+        
+        results = sq.search(paper_title='Test "quoted" and \\backslash')
+        
+        assert isinstance(results, list)
+
+
+class TestSparqlQueryURIExperimentType:
+    """URI形式のexperimentTypeフィルタのテスト"""
+
+    def test_search_by_uri_experiment_type(self, graph_with_data):
+        """kg:Synthesis形式の実験タイプでフィルタ検索するテスト"""
+        sq = SparqlQuery(graph_with_data)
+        
+        # UIからはkg:Synthesis形式で来る
+        results = sq.search(experiment_type="kg:Synthesis")
+        
+        assert len(results) == 1
+        assert "Synthesis" in results[0]["experiment_type"]
+
+    def test_search_by_uri_experiment_type_electrochemical(self, graph_with_data):
+        """kg:Electrochemical形式の実験タイプでフィルタ検索するテスト"""
+        sq = SparqlQuery(graph_with_data)
+        
+        results = sq.search(experiment_type="kg:Electrochemical")
+        
+        assert len(results) == 1
+        assert "Electrochemical" in results[0]["experiment_type"]

@@ -30,10 +30,26 @@ class GraphManager:
     def save_graph(self):
         self.g.serialize(destination=self.graph_file, format="turtle")
 
+    def _escape_sparql_string(self, value: str) -> str:
+        """SPARQL文字列リテラル用にエスケープする"""
+        return value.replace("\\", "\\\\").replace('"', '\\"')
+    
+    def _validate_paper_title(self, title: str) -> str:
+        """論文タイトルのバリデーション"""
+        if not title or not title.strip():
+            raise ValueError("Paper title cannot be empty")
+        return title.strip()
+
     def add_json_ld(self, json_data: dict):
         """Adds JSON-LD data to the graph."""
         # Check if @context is present, if not, might need to inject or assume
         # The prompt output should have @context.
+        
+        # バリデーション: paperTitleが存在する場合はチェック
+        if "kg:paperTitle" in json_data:
+            self._validate_paper_title(json_data["kg:paperTitle"])
+        elif "paperTitle" in json_data:
+            self._validate_paper_title(json_data["paperTitle"])
         
         # rdflib's parse can handle json-ld string
         json_str = json.dumps(json_data)
@@ -45,6 +61,17 @@ class GraphManager:
         try:
             # Auto-detect format based on extension or try common ones
             format = "turtle" if file_path.endswith(".ttl") else "json-ld" if file_path.endswith(".json") or file_path.endswith(".jsonld") else "xml"
+            
+            # 一時的なグラフにパースしてバリデーション
+            temp_graph = Graph()
+            temp_graph.parse(file_path, format=format)
+            
+            # paperTitleのバリデーション
+            query = "SELECT ?title WHERE { ?s kg:paperTitle ?title }"
+            for row in temp_graph.query(query, initNs=PREFIXES):
+                self._validate_paper_title(str(row.title))
+            
+            # バリデーション成功後、本グラフに追加
             self.g.parse(file_path, format=format)
             self.save_graph()
         except Exception as e:

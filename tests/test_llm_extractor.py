@@ -390,3 +390,146 @@ storage:
                 
                 captured = capsys.readouterr()
                 assert "Warning: Failed to delete file" in captured.out
+
+
+class TestLLMExtractorUploadTimeout:
+    """LLMExtractor.upload_file のタイムアウト関連テスト"""
+
+    def test_upload_file_timeout(self, tmp_path, monkeypatch):
+        """ファイル処理タイムアウトのテスト"""
+        config_file = tmp_path / "config.yaml"
+        config_file.write_text("""
+gemini:
+  model: "gemini-2.0-flash"
+  upload_timeout: 10
+  upload_max_retries: 5
+prompt:
+  extraction: "prompt.md"
+storage:
+  graph_dir: "data/graphs"
+""", encoding="utf-8")
+        
+        monkeypatch.setenv("GOOGLE_API_KEY", "test-api-key")
+        
+        # 常にPROCESSING状態を返すモック
+        mock_state = Mock()
+        mock_state.name = "PROCESSING"
+        
+        mock_file = Mock()
+        mock_file.name = "test-file"
+        mock_file.uri = "gs://test"
+        mock_file.state = mock_state
+        
+        mock_client = Mock()
+        mock_client.files.upload.return_value = mock_file
+        mock_client.files.get.return_value = mock_file  # 常にPROCESSING
+        
+        with patch("kgpaper.llm_extractor.genai.Client", return_value=mock_client):
+            with patch("kgpaper.llm_extractor.time.sleep"):
+                with patch("kgpaper.llm_extractor.time.time") as mock_time:
+                    # 時間経過をシミュレート: 0秒開始、11秒経過でタイムアウト
+                    mock_time.side_effect = [0, 0, 11]
+                    
+                    from kgpaper.llm_extractor import LLMExtractor
+                    
+                    extractor = LLMExtractor(config_path=str(config_file))
+                    
+                    with pytest.raises(TimeoutError) as exc_info:
+                        extractor.upload_file("test.pdf")
+                    
+                    assert "timed out" in str(exc_info.value)
+
+    def test_upload_file_max_retries_exceeded(self, tmp_path, monkeypatch):
+        """リトライ上限超過のテスト"""
+        config_file = tmp_path / "config.yaml"
+        config_file.write_text("""
+gemini:
+  model: "gemini-2.0-flash"
+  upload_timeout: 300
+  upload_max_retries: 2
+prompt:
+  extraction: "prompt.md"
+storage:
+  graph_dir: "data/graphs"
+""", encoding="utf-8")
+        
+        monkeypatch.setenv("GOOGLE_API_KEY", "test-api-key")
+        
+        # 常にPROCESSING状態を返すモック
+        mock_state = Mock()
+        mock_state.name = "PROCESSING"
+        
+        mock_file = Mock()
+        mock_file.name = "test-file"
+        mock_file.uri = "gs://test"
+        mock_file.state = mock_state
+        
+        mock_client = Mock()
+        mock_client.files.upload.return_value = mock_file
+        mock_client.files.get.return_value = mock_file  # 常にPROCESSING
+        
+        with patch("kgpaper.llm_extractor.genai.Client", return_value=mock_client):
+            with patch("kgpaper.llm_extractor.time.sleep"):
+                with patch("kgpaper.llm_extractor.time.time", return_value=0):  # タイムアウトしない
+                    from kgpaper.llm_extractor import LLMExtractor
+                    
+                    extractor = LLMExtractor(config_path=str(config_file))
+                    
+                    with pytest.raises(TimeoutError) as exc_info:
+                        extractor.upload_file("test.pdf")
+                    
+                    assert "max retries" in str(exc_info.value)
+
+    def test_upload_file_progress_callback(self, tmp_path, monkeypatch):
+        """進捗コールバック呼び出しのテスト"""
+        config_file = tmp_path / "config.yaml"
+        config_file.write_text("""
+gemini:
+  model: "gemini-2.0-flash"
+  upload_timeout: 300
+  upload_max_retries: 5
+prompt:
+  extraction: "prompt.md"
+storage:
+  graph_dir: "data/graphs"
+""", encoding="utf-8")
+        
+        monkeypatch.setenv("GOOGLE_API_KEY", "test-api-key")
+        
+        # 最初はPROCESSING、次にACTIVE
+        mock_state_processing = Mock()
+        mock_state_processing.name = "PROCESSING"
+        
+        mock_state_active = Mock()
+        mock_state_active.name = "ACTIVE"
+        
+        mock_file_processing = Mock()
+        mock_file_processing.name = "test-file"
+        mock_file_processing.uri = "gs://test"
+        mock_file_processing.state = mock_state_processing
+        
+        mock_file_active = Mock()
+        mock_file_active.name = "test-file"
+        mock_file_active.uri = "gs://test"
+        mock_file_active.state = mock_state_active
+        
+        mock_client = Mock()
+        mock_client.files.upload.return_value = mock_file_processing
+        mock_client.files.get.return_value = mock_file_active
+        
+        # コールバック呼び出しを記録
+        callback_calls = []
+        def progress_callback(retry_count, elapsed):
+            callback_calls.append((retry_count, elapsed))
+        
+        with patch("kgpaper.llm_extractor.genai.Client", return_value=mock_client):
+            with patch("kgpaper.llm_extractor.time.sleep"):
+                with patch("kgpaper.llm_extractor.time.time", return_value=5):
+                    from kgpaper.llm_extractor import LLMExtractor
+                    
+                    extractor = LLMExtractor(config_path=str(config_file))
+                    result = extractor.upload_file("test.pdf", progress_callback=progress_callback)
+                    
+                    assert result.state.name == "ACTIVE"
+                    # コールバックが呼ばれたことを確認
+                    assert len(callback_calls) > 0

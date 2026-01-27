@@ -24,14 +24,50 @@ class LLMExtractor:
         with open(prompt_path, "r", encoding="utf-8") as f:
             return f.read()
 
-    def upload_file(self, file_path: str):
-        """Uploads a file to Gemini API."""
+    def upload_file(self, file_path: str, progress_callback=None):
+        """Uploads a file to Gemini API.
+        
+        Args:
+            file_path: Path to the file to upload
+            progress_callback: Optional callback function(retry_count, elapsed_seconds) 
+                               for progress reporting
+        
+        Raises:
+            TimeoutError: If file processing exceeds timeout or max retries
+            Exception: If file upload fails with an error state
+        """
         file = self.client.files.upload(path=file_path)
         print(f"Uploaded file: {file.name} ({file.uri})")
         
-        # Wait for processing state if necessary (usually 'ACTIVE')
+        # Wait for processing state with timeout and retry limit
+        timeout = self.config.upload_timeout
+        max_retries = self.config.upload_max_retries
+        start_time = time.time()
+        retry_count = 0
+        
         while file.state.name == "PROCESSING":
-            print("Processing file...")
+            elapsed = time.time() - start_time
+            
+            # 進捗コールバックを呼び出し
+            if progress_callback:
+                progress_callback(retry_count, elapsed)
+            
+            # タイムアウトチェック
+            if elapsed > timeout:
+                raise TimeoutError(
+                    f"File processing timed out after {timeout} seconds. "
+                    f"File: {file.name}"
+                )
+            
+            # リトライ回数チェック
+            retry_count += 1
+            if retry_count > max_retries:
+                raise TimeoutError(
+                    f"File processing exceeded max retries ({max_retries}). "
+                    f"File: {file.name}"
+                )
+            
+            print(f"Processing file... (retry {retry_count}/{max_retries})")
             time.sleep(2)
             file = self.client.files.get(name=file.name)
             

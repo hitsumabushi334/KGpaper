@@ -36,8 +36,17 @@ with tab1:
                 tmp_path = tmp.name
                 
             try:
-                # Extract
-                json_ld = extractor.extract_json_ld(tmp_path, document_type=document_type)
+                # st.statusで詳細な進捗を表示
+                with st.status(f"Extracting from {file.name}...", expanded=True) as status:
+                    st.write("📤 Uploading file to Gemini...")
+                    
+                    # Extract with progress callback
+                    def update_progress(retry_count, elapsed):
+                        st.write(f"⏳ Processing... (retry {retry_count}, {elapsed:.0f}s elapsed)")
+                    
+                    json_ld = extractor.extract_json_ld(tmp_path, document_type=document_type)
+                    st.write("✅ Extraction complete!")
+                    status.update(label=f"✅ {file.name} processed", state="complete")
                 
                 # Add source file metadata if not present
                 if isinstance(json_ld, dict):
@@ -51,6 +60,8 @@ with tab1:
                 gm.add_json_ld(json_ld)
                 st.success(f"Successfully processed: {file.name}")
                 
+            except TimeoutError as e:
+                st.error(f"⏰ Timeout processing {file.name}: {e}")
             except Exception as e:
                 st.error(f"Error processing {file.name}: {e}")
             finally:

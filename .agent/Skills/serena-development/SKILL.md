@@ -1,6 +1,6 @@
 ---
 name: serena-development
-description: "Skills that should always be utilized when coding, code search, code editing, code verification, and code summarization and code fixing based on an implementation plan"
+description: "USE when coding, code search, code editing, code verification, and code summarization and code fixing based on an implementation plan"
 ---
 
 # Serena-First Dev Skill

@@ -262,3 +262,77 @@ def test_get_all_papers_without_source(graph_manager):
     
     assert len(papers) == 1
     assert papers[0]["source"] == ""  # OPTIONAL なので空文字列
+
+
+def test_delete_paper_preserves_other_papers(graph_manager):
+    """論文削除が他の論文に影響を与えないことを確認するテスト"""
+    # 2つの論文を追加
+    paper1 = {
+        "@context": {
+            "kg": "http://example.org/kgpaper/",
+            "Paper": "kg:Paper",
+            "paperTitle": "kg:paperTitle"
+        },
+        "@id": "urn:uuid:paper-1",
+        "@type": "kg:Paper",
+        "paperTitle": "Paper One"
+    }
+    paper2 = {
+        "@context": {
+            "kg": "http://example.org/kgpaper/",
+            "Paper": "kg:Paper",
+            "paperTitle": "kg:paperTitle"
+        },
+        "@id": "urn:uuid:paper-2",
+        "@type": "kg:Paper",
+        "paperTitle": "Paper Two"
+    }
+    graph_manager.add_json_ld(paper1)
+    graph_manager.add_json_ld(paper2)
+    
+    # paper1のみ削除
+    graph_manager.delete_paper("urn:uuid:paper-1")
+    
+    # paper2は残っていることを確認
+    q = "SELECT ?title WHERE { ?s kg:paperTitle ?title }"
+    results = list(graph_manager.g.query(q))
+    assert len(results) == 1
+    assert str(results[0].title) == "Paper Two"
+
+
+def test_validate_empty_paper_title(graph_manager):
+    """空のpaperTitleをバリデーションで拒否するテスト"""
+    data = {
+        "@context": {
+            "kg": "http://example.org/kgpaper/",
+            "Paper": "kg:Paper",
+            "paperTitle": "kg:paperTitle"
+        },
+        "@id": "urn:uuid:empty-title",
+        "@type": "kg:Paper",
+        "paperTitle": ""  # 空文字列
+    }
+    
+    with pytest.raises(ValueError) as exc_info:
+        graph_manager.add_json_ld(data)
+    
+    assert "Paper title cannot be empty" in str(exc_info.value)
+
+
+def test_validate_whitespace_only_paper_title(graph_manager):
+    """空白のみのpaperTitleをバリデーションで拒否するテスト"""
+    data = {
+        "@context": {
+            "kg": "http://example.org/kgpaper/",
+            "Paper": "kg:Paper",
+            "paperTitle": "kg:paperTitle"
+        },
+        "@id": "urn:uuid:whitespace-title",
+        "@type": "kg:Paper",
+        "paperTitle": "   "  # 空白のみ
+    }
+    
+    with pytest.raises(ValueError) as exc_info:
+        graph_manager.add_json_ld(data)
+    
+    assert "Paper title cannot be empty" in str(exc_info.value)

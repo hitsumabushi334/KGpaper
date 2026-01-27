@@ -5,6 +5,11 @@ class SparqlQuery:
     def __init__(self, graph: Graph):
         self.g = graph
 
+    def _escape_sparql_string(self, value: str) -> str:
+        """SPARQL文字列リテラル用にエスケープする"""
+        # バックスラッシュを先にエスケープ、次にダブルクォート
+        return value.replace("\\", "\\\\").replace('"', '\\"')
+
     def search(self, 
                paper_title: str | None = None, 
                document_type: str | None = None, 
@@ -25,14 +30,18 @@ class SparqlQuery:
         
         filters = []
         if paper_title:
-             filters.append(f'FILTER(CONTAINS(LCASE(?title), LCASE("{paper_title}")))')
+            escaped_title = self._escape_sparql_string(paper_title)
+            filters.append(f'FILTER(CONTAINS(LCASE(?title), LCASE("{escaped_title}")))')
         if document_type:
-             filters.append(f'FILTER(?docType = "{document_type}")')
+            escaped_doc = self._escape_sparql_string(document_type)
+            filters.append(f'FILTER(?docType = "{escaped_doc}")')
         if experiment_type and experiment_type != "All":
-             filters.append(f'FILTER(?expType = kg:{experiment_type})') # Assuming enum URI matches
+            # UIからはkg:Synthesis形式で来る。プレフィックスを付けてフィルタ
+            filters.append(f'FILTER(?expType = {experiment_type})')
         if content_type and content_type != "All":
-             filters.append(f'FILTER(?contType = "{content_type}")') # Assuming literal or URI? In prompt/ontology it's literal string for contentType
-
+            escaped_cont = self._escape_sparql_string(content_type)
+            filters.append(f'FILTER(?contType = "{escaped_cont}")')
+        
         filter_str = "\n".join(filters)
         
         query = f"""

@@ -29,7 +29,7 @@ JSON-LD形式 (単一の JSON オブジェクト)
   "hasExperiment": [
     {
       "@type": "kg:Experiment",
-      "experimentType": "synthesis",
+      "experimentType": "kg:Synthesis",
       "hasContent": [
         {
           "@type": "kg:Method",
@@ -60,16 +60,16 @@ JSON-LD形式 (単一の JSON オブジェクト)
 ## 抽出ルール
 
 1. **実験単位**: 1つの実験操作、測定、またはシミュレーションを1つの `Experiment` としてまとめてください。
-2. **experimentType**: 以下のいずれかを選択してください。
-   - `synthesis` (合成・調製)
-   - `characterization` (特性評価)
-   - `electrochemical` (電気化学測定)
-   - `spectroscopy` (分光分析)
-   - `thermal` (熱分析)
-   - `mechanical` (機械特性)
-   - `computational` (計算・シミュレーション)
-   - `biological` (生物学的評価)
-   - `other` (その他)
+2. **experimentType**: 以下のいずれかのURIを使用してください。
+   - `kg:Synthesis` (合成・調製)
+   - `kg:Characterization` (特性評価)
+   - `kg:Electrochemical` (電気化学測定)
+   - `kg:Spectroscopy` (分光分析)
+   - `kg:Thermal` (熱分析)
+   - `kg:Mechanical` (機械特性)
+   - `kg:Computational` (計算・シミュレーション)
+   - `kg:Biological` (生物学的評価)
+   - `kg:Other` (その他)
 3. **hasContent / contentType**: 実験に関連する記述を以下の4つに分類して抽出してください。
    - `method`: 手順、条件、装置、試薬など
    - `result`: 得られたデータ、観察事項、数値など

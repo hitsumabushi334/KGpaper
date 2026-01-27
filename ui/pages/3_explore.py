@@ -14,13 +14,17 @@ sq = SparqlQuery(gm.g)
 # message: filters
 st.sidebar.header("Filters")
 
-# Fetch available distinct values for filters could be optimized, 
-# but for now free text or defined enums
-paper_title = st.sidebar.text_input("Paper Title")
+# 登録済み論文のタイトル一覧を取得
+papers = gm.get_all_papers()
+paper_titles = ["All"] + [p["title"] for p in papers]
+paper_title_selected = st.sidebar.selectbox("Paper Title", paper_titles)
+paper_title = paper_title_selected if paper_title_selected != "All" else None
+
 document_type = st.sidebar.selectbox("Document Type", ["All", "main", "support"])
+# Experiment TypeはURI形式（kg:Synthesis等）に対応
 experiment_type = st.sidebar.selectbox("Experiment Type", [
-    "All", "synthesis", "characterization", "electrochemical", "spectroscopy", 
-    "thermal", "mechanical", "computational", "biological", "other"
+    "All", "kg:Synthesis", "kg:Characterization", "kg:Electrochemical", "kg:Spectroscopy",
+    "kg:Thermal", "kg:Mechanical", "kg:Computational", "kg:Biological", "kg:Other"
 ])
 content_type = st.sidebar.selectbox("Content Type", ["All", "method", "result", "discussion", "conclusion"])
 
@@ -154,14 +158,11 @@ if st.sidebar.button("Search", type="primary"):
         
         # Export
         st.subheader("Export")
-        export_format = st.radio("Format", ["JSON-LD"])
-        if st.button("Download Graph"):
-            # フィルタ結果をJSONとしてエクスポート
-            json_str = json.dumps(results, indent=2, ensure_ascii=False)
-            st.download_button(
-                label="Download Filtered Results (JSON)",
-                data=json_str,
-                file_name="results.json",
-                mime="application/json"
-            )
-            
+        # 直接ダウンロードボタンを表示（2段階フローを削除）
+        json_str = json.dumps(results, indent=2, ensure_ascii=False)
+        st.download_button(
+            label="Download Filtered Results (JSON)",
+            data=json_str,
+            file_name="results.json",
+            mime="application/json"
+        )

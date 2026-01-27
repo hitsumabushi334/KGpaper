@@ -45,6 +45,16 @@ class AppConfig:
     def default_format(self) -> str:
         return self.config.get("storage", {}).get("default_format", "json-ld")
 
+    @property
+    def upload_timeout(self) -> int:
+        """ファイルアップロードのタイムアウト秒数（デフォルト: 300秒 = 5分）"""
+        return self.config.get("gemini", {}).get("upload_timeout", 300)
+
+    @property
+    def upload_max_retries(self) -> int:
+        """ファイルアップロードの最大リトライ回数（デフォルト: 5回）"""
+        return self.config.get("gemini", {}).get("upload_max_retries", 5)
+
 # Global config instance can be initialized here or in main app
 def load_config(path: str = "config.yaml") -> AppConfig:
     return AppConfig(path)
