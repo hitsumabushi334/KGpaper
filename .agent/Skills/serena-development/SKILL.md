@@ -1,7 +1,7 @@
 ---
----
 name: serena-development
-description: "Skills that should always be utilized when coding based on an implementation plan"
+description: "Skills that should always be utilized when coding, code search, code editing, code verification, and code summarization based on an implementation plan
+"
 ---
 
 # Serena-First Dev Skill
