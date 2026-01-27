@@ -181,7 +181,7 @@ def test_import_graph_jsonld_extension(graph_manager, tmp_path):
 
 
 def test_import_graph_xml(graph_manager, tmp_path):
-    """RDF/XML形式のファイル（その他の拡張子）をインポートするテスト"""
+    """RDF/XML形式のファイル(その他の拡張子)をインポートするテスト"""
     rdf_file = tmp_path / "import.rdf"
     rdf_file.write_text("""<?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"

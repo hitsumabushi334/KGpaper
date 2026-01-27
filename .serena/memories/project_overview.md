@@ -1,14 +1,17 @@
 # KGpaper プロジェクト概要
 
 ## プロジェクト目的
+
 KGpaperは、複数の研究論文PDFから実験情報を抽出し、コンテキストを保持したナレッジグラフ（Knowledge Graph）を構築するアプリケーションです。
 
 ## 主な機能
+
 - **Register**: PDFのアップロードと情報抽出、外部RDFのインポート
 - **Manage**: 登録済み論文の管理・削除
 - **Explore**: ナレッジグラフの検索と可視化
 
 ## 技術スタック
+
 - **Python 3.12+** (uv パッケージマネージャー使用)
 - **google-genai**: LLMによる論文情報抽出 (Gemini API)
 - **rdflib**: RDFグラフ操作・SPARQL クエリ
@@ -19,6 +22,7 @@ KGpaperは、複数の研究論文PDFから実験情報を抽出し、コンテ�
 - **pytest**: テストフレームワーク
 
 ## プロジェクト構造
+
 ```
 KGpaper/
 ├── src/kgpaper/           # メインパッケージ
@@ -42,6 +46,7 @@ KGpaper/
 ```
 
 ## 主要クラス
+
 - **AppConfig**: YAML設定とenv変数を読み込む設定管理
 - **GraphManager**: RDFグラフの読み書き、JSON-LDインポート、論文削除
 - **LLMExtractor**: Google GenAI を使ってPDFから情報抽出

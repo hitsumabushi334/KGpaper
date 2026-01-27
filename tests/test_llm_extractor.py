@@ -345,7 +345,7 @@ storage:
                 assert "Empty response from Gemini" in str(exc_info.value)
 
     def test_extract_json_ld_cleanup_failure(self, tmp_path, monkeypatch, capsys):
-        """ファイル削除（クリーンアップ）失敗時の警告テスト"""
+        """ファイル削除(クリーンアップ)失敗時の警告テスト"""
         config_file = tmp_path / "config.yaml"
         prompt_file = tmp_path / "prompt.md"
         prompt_file.write_text("Extract JSON-LD", encoding="utf-8")
