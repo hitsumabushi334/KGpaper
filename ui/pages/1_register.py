@@ -4,6 +4,16 @@ import os
 from kgpaper.llm_extractor import LLMExtractor
 from kgpaper.graph_manager import GraphManager
 
+def validate_json_ld(json_ld: dict) -> tuple[bool, str]:
+    """JSON-LDの構造を検証する"""
+    if not isinstance(json_ld, dict):
+        return False, "JSON-LDデータが辞書形式ではありません"
+    if "@context" not in json_ld:
+        return False, "@contextが見つかりません"
+    if "@type" not in json_ld:
+        return False, "@typeが見つかりません"
+    return True, ""
+
 st.set_page_config(page_title="Register Papers", page_icon="📝")
 
 st.title("📝 Register Papers")
@@ -45,6 +55,14 @@ with tab1:
                         st.write(f"⏳ Processing... (retry {retry_count}, {elapsed:.0f}s elapsed)")
                     
                     json_ld = extractor.extract_json_ld(tmp_path, document_type=document_type)
+
+                    # バリデーション
+                    is_valid, error_msg = validate_json_ld(json_ld)
+                    if not is_valid:
+                        st.error(f"JSON-LD構造エラー: {error_msg}")
+                        status.update(label=f"⚠️ {file.name} failed", state="error")
+                        continue
+
                     st.write("✅ Extraction complete!")
                     status.update(label=f"✅ {file.name} processed", state="complete")
                 

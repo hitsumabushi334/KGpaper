@@ -27,13 +27,15 @@ else:
         key="papers_to_delete_selection"
     )
     
-    # 確認状態でない場合のみDeleteボタンを表示
-    if not st.session_state.get("confirm_delete_selected", False):
-        if st.button("Delete Selected", type="primary", disabled=len(selected_papers) == 0):
-            if selected_papers:
-                st.session_state.confirm_delete_selected = True
-                st.session_state.papers_to_delete = selected_papers
-                st.rerun()
+    # 確認状態を取得
+    is_confirming = st.session_state.get("confirm_delete_selected", False)
+    
+    # Deleteボタンを表示 (確認中も表示し続けることで消失を防ぐ)
+    if st.button("Delete Selected", type="primary", disabled=len(selected_papers) == 0 or is_confirming):
+        if selected_papers:
+            st.session_state.confirm_delete_selected = True
+            st.session_state.papers_to_delete = selected_papers
+            st.rerun()
     
     # 確認ダイアログを表示
     if st.session_state.get("confirm_delete_selected", False):

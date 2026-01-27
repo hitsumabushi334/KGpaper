@@ -1,9 +1,13 @@
+import logging
 import json
 import uuid
 from pathlib import Path
 from rdflib import Graph, URIRef
 from .config import load_config
 from .ontology import KG, PREFIXES
+
+logger = logging.getLogger(__name__)
+
 
 class GraphManager:
     def __init__(self, config_path="config.yaml"):
@@ -24,16 +28,16 @@ class GraphManager:
             try:
                 self.g.parse(self.graph_file, format="turtle")
             except Exception as e:
-                print(f"Error loading graph: {e}")
-                # Fallback to empty graph or backup?
-                
+                logger.error(f"グラフ読み込み失敗: {e}", exc_info=True)
+                raise  # UI側でハンドリング可能にする
+
     def save_graph(self):
         self.g.serialize(destination=self.graph_file, format="turtle")
 
     def _escape_sparql_string(self, value: str) -> str:
         """SPARQL文字列リテラル用にエスケープする"""
         return value.replace("\\", "\\\\").replace('"', '\\"')
-    
+
     def _validate_paper_title(self, title: str) -> str:
         """論文タイトルのバリデーション"""
         if not title or not title.strip():
@@ -44,13 +48,13 @@ class GraphManager:
         """Adds JSON-LD data to the graph."""
         # Check if @context is present, if not, might need to inject or assume
         # The prompt output should have @context.
-        
+
         # バリデーション: paperTitleが存在する場合はチェック
         if "kg:paperTitle" in json_data:
             self._validate_paper_title(json_data["kg:paperTitle"])
         elif "paperTitle" in json_data:
             self._validate_paper_title(json_data["paperTitle"])
-        
+
         # rdflib's parse can handle json-ld string
         json_str = json.dumps(json_data)
         self.g.parse(data=json_str, format="json-ld")
@@ -60,17 +64,25 @@ class GraphManager:
         """Imports an external RDF file."""
         try:
             # Auto-detect format based on extension or try common ones
-            format = "turtle" if file_path.endswith(".ttl") else "json-ld" if file_path.endswith(".json") or file_path.endswith(".jsonld") else "xml"
-            
+            format = (
+                "turtle"
+                if file_path.endswith(".ttl")
+                else (
+                    "json-ld"
+                    if file_path.endswith(".json") or file_path.endswith(".jsonld")
+                    else "xml"
+                )
+            )
+
             # 一時的なグラフにパースしてバリデーション
             temp_graph = Graph()
             temp_graph.parse(file_path, format=format)
-            
+
             # paperTitleのバリデーション
             query = "SELECT ?title WHERE { ?s kg:paperTitle ?title }"
             for row in temp_graph.query(query, initNs=PREFIXES):
                 self._validate_paper_title(str(row.title))
-            
+
             # バリデーション成功後、本グラフに追加
             self.g.parse(file_path, format=format)
             self.save_graph()
@@ -86,15 +98,15 @@ class GraphManager:
         """
         # Strategy: Find all sub-nodes (Experiment, Content) linked to this Paper
         # and remove them.
-        
+
         paper_ref = URIRef(paper_uri)
-        
+
         # 1. Provide a query to find all related triples
         # Pattern:
         # ?paper ?p ?o .
         # ?paper kg:hasExperiment ?exp . ?exp ?p2 ?o2 .
         # ?exp kg:hasContent ?cont . ?cont ?p3 ?o3 .
-        
+
         # We can use SPARQL to select distinct subjects to delete
         query = """
         SELECT DISTINCT ?s
@@ -119,23 +131,23 @@ class GraphManager:
             }
         }
         """
-        
-        results = self.g.query(query, initBindings={'target_paper': paper_ref})
+
+        results = self.g.query(query, initBindings={"target_paper": paper_ref})
         subjects_to_remove = [row.s for row in results]
-        
+
         for s in subjects_to_remove:
             self.g.remove((s, None, None))
-            
+
         # Also remove incoming links to the paper? (e.g. lists)
         self.g.remove((None, None, paper_ref))
-        
+
         self.save_graph()
 
     def clear_all(self):
         """Clears the entire graph."""
         self.g = Graph()
         self._bind_prefixes()
-        self.save_graph() # Overwrite with empty
+        self.save_graph()  # Overwrite with empty
 
     def get_all_papers(self):
         """Returns list of paper metadata for management UI."""
@@ -149,5 +161,12 @@ class GraphManager:
         }
         """
         results = self.g.query(query)
-        return [{"uri": str(row.paper), "title": str(row.title), "type": str(row.type), "source": str(row.source) if row.source else ""} for row in results]
-
+        return [
+            {
+                "uri": str(row.paper),
+                "title": str(row.title),
+                "type": str(row.type),
+                "source": str(row.source) if row.source else "",
+            }
+            for row in results
+        ]
