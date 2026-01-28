@@ -202,23 +202,31 @@ def test_import_graph_jsonld_extension(graph_manager, tmp_path):
 
 
 def test_import_graph_xml(graph_manager, tmp_path):
-    """RDF/XML形式のファイル(その他の拡張子)をインポートするテスト"""
-    rdf_file = tmp_path / "import.rdf"
+    """XML形式でのインポートが拒否されることを確認するテスト"""
+    # 拡張子が.xmlの場合
+    xml_file = tmp_path / "import.xml"
+    xml_file.write_text("<xml></xml>", encoding="utf-8")
+
+    with pytest.raises(ValueError) as exc_info:
+        graph_manager.import_graph(str(xml_file))
+    assert "XML format is not supported" in str(exc_info.value)
+
+
+def test_import_graph_invalid_json_structure(graph_manager, tmp_path):
+    """構造が不正なJSON-LD（@contextなし）をインポートした際のエラーテスト"""
+    rdf_file = tmp_path / "invalid.json"
     rdf_file.write_text(
-        """<?xml version="1.0" encoding="UTF-8"?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:kg="http://example.org/kgpaper/">
-  <rdf:Description rdf:about="urn:uuid:xml-imported">
-    <rdf:type rdf:resource="http://example.org/kgpaper/Paper"/>
-    <kg:paperTitle>XML Imported Paper</kg:paperTitle>
-  </rdf:Description>
-</rdf:RDF>""",
+        """{
+      "@id": "urn:uuid:invalid",
+      "kg:paperTitle": "Invalid Paper"
+    }""",
         encoding="utf-8",
     )
 
-    graph_manager.import_graph(str(rdf_file))
+    with pytest.raises(ValueError) as exc_info:
+        graph_manager.import_graph(str(rdf_file))
 
-    assert len(graph_manager.g) > 0
+    assert "Missing @context" in str(exc_info.value)
 
 
 def test_import_graph_error(graph_manager, tmp_path):

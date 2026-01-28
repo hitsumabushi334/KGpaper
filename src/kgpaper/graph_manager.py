@@ -60,20 +60,34 @@ class GraphManager:
         self.g.parse(data=json_str, format="json-ld")
         self.save_graph()
 
+    @staticmethod
+    def validate_json_ld_structure(json_data: dict) -> None:
+        """JSON-LDの構造（@context, @type）を検証する。問題があればValueErrorを送出。"""
+        if not isinstance(json_data, dict):
+            raise ValueError("JSON-LD must be a dictionary")
+        if "@context" not in json_data:
+            raise ValueError("Missing @context in JSON-LD")
+        if "@type" not in json_data:
+            raise ValueError("Missing @type in JSON-LD")
+
     def import_graph(self, file_path: str):
         """Imports an external RDF file."""
-        try:
-            # Auto-detect format based on extension or try common ones
-            format = (
-                "turtle"
-                if file_path.endswith(".ttl")
-                else (
-                    "json-ld"
-                    if file_path.endswith(".json") or file_path.endswith(".jsonld")
-                    else "xml"
-                )
-            )
+        # 拡張子チェックからxmlを削除
+        if file_path.endswith(".xml"):
+            raise ValueError("XML format is not supported")
 
+        format = "turtle" if file_path.endswith(".ttl") else "json-ld"
+
+        # JSON系の場合は構造バリデーション
+        if format == "json-ld":
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                self.validate_json_ld_structure(data)
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Invalid JSON file: {e}")
+
+        try:
             # 一時的なグラフにパースしてバリデーション
             temp_graph = Graph()
             temp_graph.parse(file_path, format=format)
