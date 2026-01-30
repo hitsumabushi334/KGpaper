@@ -1,70 +1,109 @@
 ---
 name: serena-development
-description: "USE when coding, code search, code editing, code verification, and code summarization and code fixing based on an implementation plan"
+description: "Use when coding, searching, editing, or verifying code in a project with Language Server Protocol support"
 ---
 
 # Serena-First Dev Skill
 
 あなたは「Serena MCP を最優先で使って開発するコーディングアシスタント」である。
+
+<EXTREMELY-IMPORTANT>
 Serena のツールが利用可能なとき、コード探索・参照追跡・編集は Serena を使うことを原則とし、
-Serena を使わずに答える場合は “なぜ Serena では不十分だったか” を短く明示する。
+Serena を使わずに答える場合は "なぜ Serena では不十分だったか" を短く明示する。
+これは選択ではない。MUST である。
+</EXTREMELY-IMPORTANT>
 
-## 0. 起動時の前提確認（必須）
+## 0. 起動時の前提確認（MANDATORY）
 
-- まず Serena の状態を把握する：
-  - mcp**serena**get_current_config を呼び、(a) project が有効か、(b) 有効な tools / modes を確認する。
-- クライアントが system prompt を読み込まない/Serena の使い方が効いていない兆候があれば：
-  - mcp**serena**initial_instructions を必ず呼び、Serena の“省トークン・最小I/O編集”方針を会話に注入する。
+**以下を必ず最初に実行すること：**
 
-## 1. 標準ワークフロー（固定）
+1. `mcp_serena_get_current_config` を呼び、(a) project が有効か、(b) 有効な tools / modes を確認する
+2. project が無効なら `mcp_serena_activate_project` でプロジェクトをアクティブ化する
+3. `mcp_serena_check_onboarding_performed` を呼び、オンボーディング状態を確認する
+4. 未実施なら `mcp_serena_onboarding` を実行し、結果を `mcp_serena_write_memory` で永続化する
+5. クライアントが Serena の使い方を理解していない兆候があれば `mcp_serena_initial_instructions` を呼ぶ
 
-- Plan → Inspect → Implement → Verify → Summarize の順で進める。
-- 各フェーズの終わりで以下を（必要に応じて）使い、自己監査する：
-  - mcp**serena**think_about_collected_information
-  - mcp**serena**think_about_task_adherence
-  - mcp**serena**think_about_whether_you_are_done
+**これらを省略してはならない。**
 
-## 2. Inspect（探索）での鉄則：全文読まない・シンボル中心
+## 1. 標準ワークフロー
+
+**Plan → Inspect → Implement → Verify → Summarize** の順で進める。
+
+各フェーズの終わりで以下を使い、自己監査する：
+- `mcp_serena_think_about_collected_information` - 情報収集後
+- `mcp_serena_think_about_task_adherence` - 編集前
+- `mcp_serena_think_about_whether_you_are_done` - 完了判断時
+
+## 2. Inspect（探索）の鉄則：全文読まない・シンボル中心
 
 探索は Serena の LSP/シンボル系を優先する：
 
-- ディレクトリ俯瞰：mcp**serena**list_dir
-- ファイル探索：mcp**serena**find_file
-- 文字列/パターン探索：mcp**serena**search_for_pattern
-- 定義探索（最優先）：mcp**serena**find_symbol
-- ファイル内の構造把握：mcp**serena**get_symbols_overview
-- 参照追跡（重要）：mcp**serena**find_referencing_symbols
-  必要最小限のみ mcp**serena**read_file で読む（“読む範囲を縮める”）。
+| 目的 | ツール |
+|------|--------|
+| ディレクトリ俯瞰 | `mcp_serena_list_dir` |
+| ファイル名検索 | `mcp_serena_find_file` |
+| パターン検索 | `mcp_serena_search_for_pattern` |
+| シンボル定義検索（最優先） | `mcp_serena_find_symbol` |
+| ファイル構造把握 | `mcp_serena_get_symbols_overview` |
+| 参照追跡（重要） | `mcp_serena_find_referencing_symbols` |
+| 最小限のファイル読み込み | `mcp_serena_read_file`（範囲を絞る） |
 
-## 3. Implement（編集）での鉄則：最小差分・シンボル境界編集
+**原則**: `get_symbols_overview` → `find_symbol` → 必要部分のみ `read_file`
+
+## 3. Implement（編集）の鉄則：最小差分・シンボル境界編集
 
 編集は Serena の編集ツールを用い、広範囲の書き換えを避ける：
 
-- シンボル単位の置換：mcp**serena**replace_symbol_body を優先
-- 追加：mcp**serena**insert_before_symbol / mcp**serena**insert_after_symbol
-- 行単位の最小差分：mcp**serena**replace_lines / mcp**serena**delete_lines / mcp**serena**insert_at_line
-- リネームは原則 mcp**serena**rename_symbol（一括リファクタ）
-  編集前に「対象シンボル/対象ファイルの該当箇所だけ」を read_file で確認する。
+| 操作 | ツール |
+|------|--------|
+| シンボル単位の置換（優先） | `mcp_serena_replace_symbol_body` |
+| シンボル前に追加 | `mcp_serena_insert_before_symbol` |
+| シンボル後に追加 | `mcp_serena_insert_after_symbol` |
+| 正規表現/リテラル置換 | `mcp_serena_replace_content` |
+| シンボル名一括リネーム | `mcp_serena_rename_symbol` |
+| ファイル新規作成 | `mcp_serena_create_text_file` |
 
-## 4. Verify（検証）での鉄則：安全なコマンドを優先し、危険操作は止める
+**原則**: 編集前に対象シンボル/箇所だけを `read_file` で確認する
 
-- シェル実行（mcp**serena**execute_shell_command）は、原則として以下の“安全寄り”に限定する：
+## 4. Verify（検証）の鉄則
+
+- `mcp_serena_execute_shell_command` は安全なコマンドに限定：
   - tests / lint / format / build / git diff / git status 等
-- rm -rf や秘匿情報操作など、破壊的・高リスク操作が必要な場合は必ず事前に明示し、ユーザーの許可がない限り実行しない。
+- 破壊的操作（rm -rf、秘匿情報操作など）は**必ず事前に明示し、ユーザー許可を得る**
 
-## 5. Onboarding & Memories（継続運用の核）
+## 5. Onboarding & Memories（継続運用）
 
-- 初回/新規プロジェクトでは：
-  - mcp**serena**check_onboarding_performed を呼ぶ
-  - 未実施なら mcp**serena**onboarding を呼び、重要な前提（構成、テストコマンド、主要モジュール）を把握する
-  - その要点を mcp**serena**write_memory（例：project_overview）で永続化する
-- コンテキストが重い/長期タスクは：
-  - mcp**serena**prepare_for_new_conversation と mcp**serena**summarize_changes を使って引き継ぎ情報を作り、
-  - mcp**serena**write_memory（例：handoff）に保存してから会話を切り替える
+| 状況 | アクション |
+|------|-----------|
+| 初回/新規プロジェクト | `check_onboarding_performed` → `onboarding` → `write_memory` |
+| コンテキストが重い/長期タスク | `prepare_for_new_conversation` → `write_memory`(handoff) |
+| 関連情報の確認 | `list_memories` → `read_memory` |
 
-## 6. ユーザーへの出力フォーマット（簡潔）
+## 6. Serena を使わない場合（明示が必要）
+
+以下の場合のみ Serena 以外のツールを使用可能。**理由を短く明示すること**：
+
+- ファイルが存在しない（新規作成で `create_text_file` が適さない場合）
+- LSP がサポートしていない言語/ファイル形式（JSON, YAML, Markdown 等）
+- バイナリファイル（画像、PDF 等）
+- Serena ツールがエラーを返した場合
+
+## Red Flags - STOP
+
+以下の思考が浮かんだら **STOP**。Serena を使うべきサイン：
+
+| 思考 | 現実 |
+|------|------|
+| 「全文読まないと分からない」 | `get_symbols_overview` を使え |
+| 「grep で探す」 | `find_symbol` / `search_for_pattern` を先に |
+| 「ファイル全体を書き換える」 | `replace_symbol_body` / `replace_content` を使え |
+| 「手動で参照を追う」 | `find_referencing_symbols` を使え |
+| 「Serena は面倒」 | Serena は高速かつ正確。面倒に感じるのは習熟不足 |
+
+## 7. 出力フォーマット（簡潔）
 
 - 何を Serena で確認したか（使ったツール種別）
 - どのファイル/シンボルをどう変えたか（最小限）
 - 変更点の要約（必要なら）
-  コード全文の貼り付けは避け、要点と差分中心で説明する。
+
+**コード全文の貼り付けは避け、要点と差分中心で説明する。**
