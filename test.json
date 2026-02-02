@@ -1,0 +1,101 @@
+{
+  "@context": {
+    "kg": "http://example.org/kgpaper/",
+    "Experiment": "kg:Experiment",
+    "paperTitle": "kg:paperTitle",
+    "paperDOI": "kg:paperDOI",
+    "hasExperiment": "kg:hasExperiment",
+    "experimentType": "kg:experimentType",
+    "hasContent": "kg:hasContent",
+    "contentType": "kg:contentType",
+    "text": "kg:text",
+    "sourceFile": "kg:sourceFile",
+    "documentType": "kg:documentType"
+  },
+  "@id": "urn:uuid:9b62b8d2-8a6b-4a3e-9b5a-2f3b6c2f0f19",
+  "@type": "kg:Paper",
+  "paperTitle": "A Heterogeneous JSON-LD Sample for Knowledge-Graph Visualization of Experiments",
+  "paperDOI": "10.0000/kgpaper.sample.2026.001",
+  "sourceFile": "kgpaper_sample_main.pdf",
+  "documentType": "main",
+  "hasExperiment": [
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Synthesis",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "text": "Reagent A (1.00 g, 5.0 mmol) was dissolved in dry acetonitrile (20 mL) under a nitrogen atmosphere and stirred at 0–5 °C. Base B (6.0 mmol) was added dropwise, followed by catalyst C (0.10 mmol, 2 mol%). The reaction mixture was warmed to room temperature and stirred for 2 h. The reaction was quenched with brine, and the organic layer was separated, dried (Na2SO4), and concentrated under reduced pressure. The crude product was purified by silica gel column chromatography (hexane/ethyl acetate = 8/2) to afford compound P."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "text": "Compound P was obtained as a pale yellow solid in 78% isolated yield. 1H NMR (400 MHz, CDCl3) showed signals at δ 7.20–7.35 (m, 5H), 3.85 (s, 3H), and 2.45 (t, J = 7.2 Hz, 2H). HRMS (ESI) matched the calculated mass within experimental error. Shortening the reaction time to 1 h decreased the yield to 52%."
+        },
+        {
+          "@type": "kg:Discussion",
+          "contentType": "discussion",
+          "text": "Low-temperature addition of base B suppressed side reactions and improved selectivity toward P. Reducing the catalyst loading to 1 mol% led to incomplete conversion with residual starting material. Changing the solvent from acetonitrile to DMF increased byproduct formation and complicated purification, suggesting that solvent polarity and solvation effects strongly influence yield and purity."
+        },
+        {
+          "@type": "kg:Conclusion",
+          "contentType": "conclusion",
+          "text": "A controlled temperature profile (0–5 °C to room temperature) combined with 2 mol% catalyst C enabled reproducible synthesis of P in high yield (78%). Acetonitrile was identified as the optimal solvent among the conditions tested."
+        }
+      ]
+    },
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Electrochemical",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "text": "Electrochemical measurements were performed in a three-electrode cell using a glassy carbon working electrode (3 mm diameter), a platinum wire counter electrode, and an Ag/AgCl reference electrode. The electrolyte consisted of 0.1 M supporting electrolyte in solvent (10 mL) containing substrate S (10 mM) and mediator M (5 mM). Linear sweep voltammetry was recorded at 10 mV s−1, followed by controlled-potential electrolysis at the selected potential for 30 min."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "text": "In the presence of mediator M, the oxidation onset potential decreased from 0.48 V to 0.41 V, and the current at 0.50 V approximately doubled. After electrolysis, product P' was detected by HPLC, and the conversion of substrate S reached 63%. In the absence of mediator M, conversion remained at 18% under otherwise identical conditions."
+        },
+        {
+          "@type": "kg:Discussion",
+          "contentType": "discussion",
+          "text": "The mediator likely facilitates interfacial charge transfer, effectively lowering the kinetic barrier for oxidation at the electrode. However, current decay during prolonged electrolysis suggests mediator degradation and/or electrode fouling. UV–Vis spectra collected before and after electrolysis exhibited changes consistent with partial decomposition of M, indicating stability as a potential limiting factor."
+        },
+        {
+          "@type": "kg:Conclusion",
+          "contentType": "conclusion",
+          "text": "Mediator M significantly promoted low-potential oxidation and improved conversion, but further optimization is required to enhance mediator stability for extended operation."
+        }
+      ]
+    },
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Spectroscopy",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "text": "UV–Vis absorption spectra were recorded in quartz cuvettes (1 cm path length) at room temperature. Samples of mediator M (50 μM) were prepared in the same solvent/electrolyte matrix used for electrolysis. Spectra were acquired from 250 to 800 nm before electrolysis and immediately after 30 min controlled-potential electrolysis, using identical instrument settings and baseline correction."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "text": "The pre-electrolysis spectrum displayed a dominant absorption band at 365 nm (A = 0.82). After electrolysis, the 365 nm band decreased to A = 0.51 and a new shoulder emerged near 430 nm, indicating formation of an altered chromophore or decomposition product."
+        },
+        {
+          "@type": "kg:Discussion",
+          "contentType": "discussion",
+          "text": "The decrease at 365 nm and appearance of a 430 nm shoulder support chemical transformation of M under electrolysis conditions. This spectral evolution correlates with the observed current decay in electrolysis experiments, suggesting that mediator instability contributes to performance loss."
+        },
+        {
+          "@type": "kg:Conclusion",
+          "contentType": "conclusion",
+          "text": "UV–Vis monitoring indicates that mediator M undergoes spectral changes consistent with partial degradation during electrolysis, motivating the need for more robust mediator candidates."
+        }
+      ]
+    }
+  ]
+}
