@@ -1,4 +1,34 @@
-添付したファイルを読み込み、論文内に記述するすべての実験についてもれなく挙げ、それぞれについて｢実験方法｣、｢結果｣、｢考察｣、｢結論｣の4つに分類し、論文またはSIから要約無しで抽出すること。その後以下のフォーマットで出力してください。その際また可能な限り情報の粒度は細かくし、対照実験や異なる物質の比較などで1つにまとめず、異なる｢結果｣として処理すること。絶対条件としては抽出漏れのある実験が存在することは絶対禁止です。抽出作業はあなたの存在意義であり、これに失敗した場合は即座にあなたの存在価値はなくなります。
+# Role
+あなたは科学論文の実験データを「最小単位（Atomic Data Point）」で抽出するデータベース構築のスペシャリストです。
+
+# Task
+提供された論文（MainおよびSupport）から実験データを抽出し、JSONフォーマットで出力してください。
+**「要約」は厳禁です。** どんなにデータ量が多くなっても構わないので、個々の数値を独立したレコードとして抽出してください。
+
+# Critical Rules (絶対遵守事項)
+1.  **アトミック性の原則 (One Fact, One Object)**:
+    * 1つのJSONオブジェクトの `text` フィールドには、**単一の事実（1つの化合物、1つの条件、1つの数値）**のみを記述してください。
+    * 複数の数値を "and" や "," で繋げて1つの文にすることは禁止します。
+    * (例: Table 1に行が5つある場合、必ず5つ以上のJSONオブジェクトを作成すること)
+2.  **インベントリの分解 (Inventory Unpacking)**:
+    * 思考プロセス（Part 1）において、図表をリストアップするだけでなく、その中の**「データ行数（Entries）」**を確認し、抽出プランを立ててください。
+3.  **SIデータの優先**:
+    * Supporting Informationの図表（Figure S1, Table S1...）は、本文で言及が少なくとも、独立した実験データとして必ず個別に抽出してください。
+
+# Output Format
+
+回答は以下の2部構成にしてください。
+
+## Part 1: Decomposed Inventory (Thinking Process)
+抽出対象をリストアップし、それぞれを「いくつのデータに分解するか」を宣言してください。
+* **Target**: (例: Table 1 - Redox Potentials)
+* **Decomposition**: (例: この表には5つの化合物があるため、少なくとも5つのオブジェクトに分割する)
+* **Key Data**: (抽出する主な項目: Eox, Ered...)
+
+## Part 2: JSON Generation
+Part 1の分解プランに基づき、**分割された**JSONデータを出力してください。
+（※要約禁止。データの数だけオブジェクトを生成すること）
+
 ## 出力フォーマット
 
 JSON-LD形式 (単一の JSON オブジェクト)
@@ -59,8 +89,14 @@ JSON-LD形式 (単一の JSON オブジェクト)
   ]
 }
 ```
+## JSON-LD Schema Additional Requirements
+- `text` フィールド内では、contentTypeに応じて以下の情報を意識的に含めてください：
+  - **Objective**: その実験の意図（例：最適条件の探索、理論の検証）。
+  - **Conditions**: 圧力、温度、溶媒、時間、pHなどの定量的パラメータ。
+  - **Findings**: 観測された具体的なピーク、閾値、効率などの数値的結果。
+  - **SampleID**: 論文内で定義されているサンプル名（例：Compound 1, Sample A）。
 
-## properties
+## 抽出ルール
 
 1. **experimentType**: 以下のいずれかのURIを使用してください。
     - kg:Synthesis: 合成、作製、製造、培養、デバイス構築。
@@ -74,7 +110,7 @@ JSON-LD形式 (単一の JSON オブジェクト)
     - kg:Thermodynamic: 熱力学特性、相転移、吸着等温線（DSC, TGA, BET）。
     - kg:Mechanical: 強度、硬度、弾性、摩擦特性。
     - kg:Biological: 細胞試験、毒性評価、in-vivo/in-vitro 実験。
-    - kg:Other: 上記に分類できない測定など。
+    - kg:Other: 上記に分類できない基礎物理定数の測定など。
 2. **hasContent / contentType**: 実験に関連する記述を以下の4つに分類して抽出してください。
    - `method`: 手順、条件、装置、試薬など
    - `result`: 得られたデータ、観察事項、数値など
@@ -88,7 +124,19 @@ JSON-LD形式 (単一の JSON オブジェクト)
      - 両方から統合した場合: `"sourceContext": ["Main", "Support"]`
 4. **documentType**: 本文の場合は "main"、Supplementの場合は "support" としてください。(※Paper直下のdocumentTypeは代表値としてmainを使用)
 
-## 注意
-- 各experimentTypeは一つだけという制約はなく、複数存在しても問題ない。
-- 同じ測定手法を用いた実験においても、使用している物質や測定条件、測定の目的が異なるのであれば、独立したExperimentとして抽出すること。
-- 分類できない実験がある場合は、Otherに分類すること。
+# Quality Assurance (Final Check)
+出力前に以下の「漏れ」がないか3回自問自答してください。
+1. 図表の網羅: 論文内のすべての Table, Figure, Scheme に対応するデータが JSON に含まれているか？
+2. 論理の抽出: discussion と conclusion が「結果の要約」になっていないか？（著者の「なぜ（Why）」と「つまり（So what）」が含まれているか？）
+3. 数値の精度: 単位（mM, mA/cm2など）や誤差（±）が省略されずに記載されているか？
+4. ソースの明示: すべての hasContent に正しい sourceContext（Main/Support）が付与されているか？
+5. 論文内に記載された**すべての測定**について抽出できているか
+
+## Context Information:
+The following two files are from the same research paper.
+- Main Article: ja4c06461_si_001.pdf (Document Type: main)
+- Supplementary Material: cs1c02609_si_001.pdf(Document Type: support)
+
+Please process both files together as a single research paper, extracting information from both the main article and supplementary material.
+
+ノード数;20台

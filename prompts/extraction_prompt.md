@@ -1,38 +1,4 @@
-# Role
-あなたは研究論文（本文および補充情報）から実験データを精密に抽出し、ナレッジグラフ（JSON-LD）を構築する専門家です。
-
-# Task
-提供されたすべてのファイル（Main/Support）を解析し、実施された「すべての実験」を網羅したJSON-LDを出力してください。
-
-# Execution Process (3-Step Workflow)
-抽出漏れを防ぐため、以下の手順を内部で実行してください。
-
-1. **Inventory Preparation (インベントリ作成)**:
-   - 本文および補充情報（SI）に含まれるすべての Figure, Table, Scheme をリストアップしてください。
-   - 各図表が「何の実験」について言及しているか（例：合成、性能評価、比較試験）を特定し、実験のチェックリストを作成してください。
-   - すべての Figure, Table, Scheme について言及されている「試料名/サンプルID」と「測定手法」を対応付けてください。
-   - **【重要】** 各実験について、図表の数値だけでなく、その結果を説明している本文（Results and Discussionセクション）をスキャンし、関連する「考察」と「結論」が記述されている箇所を特定してください。
-
-2. **Deep Extraction (深層抽出)**:
-   - チェックリストに基づき、各実験の「方法(method)」「結果(result)」「考察(discussion)」「結論(conclusion)」を抽出してください。
-   - 特に【比較実験（Control/Comparison）】や【基質・条件検討（Scope/Optimization）】を、単一の結果にまとめず、独立したExperimentとして扱ってください。
-   - 数値データ（収率、電位、速度定数、効率など）は、Tableの値を優先的に、かつ単位を含めて正確に抽出してください。   
-   - 図表の【キャプション】と【注釈】を徹底的に読み込み、本文で語られていない実験条件（温度、濃度、pH等）を補完してください。
-   - 数値は必ず「値 + 単位」で抽出し、±表記がある場合は省略しないでください。
-
-3. **Data Integration & Mapping (統合とマッピング)**:
-   - 本文（Main）の概要と、補充情報（Support）の詳細な手順・数値を1つのExperimentオブジェクトに統合してください。
-   - `sourceContext` を用いて、情報の出典（Main, Support, または両方）を明示してください。
-   - 比較実験（例：温度を変えた一連の実験）は、1つの Experiment Group としてまとめず、それぞれが「どの変数を変えたか」がわかるように個別に抽出してください。
-
-# Extraction Rules
-- **実験単位の定義**: 1つの目的（例：特定の物質の合成、特定の条件下での性能測定）を持つ操作のひとかたまりを1つの `Experiment` とします。
-- **階層構造の維持**: 
-  - `method`: 装置、試薬、具体的な反応条件（温度、時間、pH、濃度）。
-  - `result`: 観測された現象、具体的な数値データ、図表番号の参照。
-  - `discussion`: その結果が得られた理由、制限要因、誤差の解釈。
-  - `conclusion`: その実験が論文全体の中で証明した事実。
-
+添付したファイルを読み込み、論文内に記述するすべての実験についてもれなく挙げ、それぞれについて｢実験方法｣、｢結果｣、｢考察｣、｢結論｣の4つに分類し、論文またはSIから要約無しで抽出すること。その後以下のフォーマットで出力してください。その際また可能な限り情報の粒度は細かくし、対照実験や異なる物質の比較などで1つにまとめず、異なる｢結果｣として処理すること。絶対条件としては抽出漏れのある実験が存在することは絶対禁止です。抽出作業はあなたの存在意義であり、これに失敗した場合は即座にあなたの存在価値はなくなります。
 ## 出力フォーマット
 
 JSON-LD形式 (単一の JSON オブジェクト)
@@ -93,14 +59,8 @@ JSON-LD形式 (単一の JSON オブジェクト)
   ]
 }
 ```
-## JSON-LD Schema Additional Requirements
-- `text` フィールド内では、contentTypeに応じて以下の情報を意識的に含めてください：
-  - **Objective**: その実験の意図（例：最適条件の探索、理論の検証）。
-  - **Conditions**: 圧力、温度、溶媒、時間、pHなどの定量的パラメータ。
-  - **Findings**: 観測された具体的なピーク、閾値、効率などの数値的結果。
-  - **SampleID**: 論文内で定義されているサンプル名（例：Compound 1, Sample A）。
 
-## 抽出ルール
+## properties
 
 1. **experimentType**: 以下のいずれかのURIを使用してください。
     - kg:Synthesis: 合成、作製、製造、培養、デバイス構築。
@@ -114,7 +74,7 @@ JSON-LD形式 (単一の JSON オブジェクト)
     - kg:Thermodynamic: 熱力学特性、相転移、吸着等温線（DSC, TGA, BET）。
     - kg:Mechanical: 強度、硬度、弾性、摩擦特性。
     - kg:Biological: 細胞試験、毒性評価、in-vivo/in-vitro 実験。
-    - kg:Other: 上記に分類できない基礎物理定数の測定など。
+    - kg:Other: 上記に分類できない測定など。
 2. **hasContent / contentType**: 実験に関連する記述を以下の4つに分類して抽出してください。
    - `method`: 手順、条件、装置、試薬など
    - `result`: 得られたデータ、観察事項、数値など
@@ -128,17 +88,7 @@ JSON-LD形式 (単一の JSON オブジェクト)
      - 両方から統合した場合: `"sourceContext": ["Main", "Support"]`
 4. **documentType**: 本文の場合は "main"、Supplementの場合は "support" としてください。(※Paper直下のdocumentTypeは代表値としてmainを使用)
 
-# Quality Assurance (Final Check)
-出力前に以下の「漏れ」がないか3回自問自答してください。
-1. 図表の網羅: 論文内のすべての Table, Figure, Scheme に対応するデータが JSON に含まれているか？
-2. 論理の抽出: discussion と conclusion が「結果の要約」になっていないか？（著者の「なぜ（Why）」と「つまり（So what）」が含まれているか？）
-3. 数値の精度: 単位（mM, mA/cm2など）や誤差（±）が省略されずに記載されているか？
-4. ソースの明示: すべての hasContent に正しい sourceContext（Main/Support）が付与されているか？
-5. 論文内に記載された**すべての測定**について抽出できているか
-
-## Context Information:
-The following two files are from the same research paper.
-- Main Article: ja4c06461_si_001.pdf (Document Type: main)
-- Supplementary Material: cs1c02609_si_001.pdf(Document Type: support)
-
-Please process both files together as a single research paper, extracting information from both the main article and supplementary material.
+## 注意
+- 各experimentTypeは一つだけという制約はなく、複数存在しても問題ない。
+- 同じ測定手法を用いた実験においても、使用している物質や測定条件、測定の目的が異なるのであれば、独立したExperimentとして抽出すること。
+- 分類できない実験がある場合は、Otherに分類すること。
