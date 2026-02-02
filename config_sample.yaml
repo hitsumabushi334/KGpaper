@@ -1,0 +1,9 @@
+gemini:
+  model: "gemini-3.0-flash"
+
+prompt:
+  extraction: "prompts/extraction_prompt.md"
+
+storage:
+  graph_dir: "data/graphs"
+  default_format: "json-ld"

@@ -112,3 +112,80 @@ class LLMExtractor:
             except Exception as e:
                 print(f"Warning: Failed to delete file {uploaded_file.name}: {e}")
 
+    def extract_json_ld_pair(
+        self, main_file_path: str, support_file_path: str | None = None
+    ) -> dict:
+        """
+        MainファイルとSupportファイルをペアで処理し、JSON-LDを抽出する。
+        
+        2つのファイルが同じ論文の本文（Main）とサポート資料（Support）の関係にあることを
+        LLMに伝え、1回の呼び出しで両方を処理する。
+        
+        Args:
+            main_file_path: 本文PDFのパス（必須）
+            support_file_path: サポートPDFのパス（オプション）
+        
+        Returns:
+            dict: 抽出されたJSON-LD
+        """
+        prompt_text = self._read_prompt()
+        
+        # ファイル名を取得
+        main_filename = os.path.basename(main_file_path)
+        
+        # アップロードするファイルのリスト
+        uploaded_files = []
+        
+        # Mainファイルをアップロード
+        main_uploaded = self.upload_file(main_file_path)
+        uploaded_files.append(main_uploaded)
+        
+        # Supportファイルがある場合はアップロード
+        support_uploaded = None
+        if support_file_path:
+            support_uploaded = self.upload_file(support_file_path)
+            uploaded_files.append(support_uploaded)
+            support_filename = os.path.basename(support_file_path)
+        
+        try:
+            # プロンプトにコンテキスト情報を追加
+            if support_file_path:
+                # 2つのファイルがある場合、関係性を明記
+                prompt_text += f"""
+
+Context Information:
+The following two files are from the same research paper.
+- Main Article: {main_filename} (Document Type: main)
+- Supplementary Material: {support_filename} (Document Type: support)
+
+Please process both files together as a single research paper, extracting information from both the main article and supplementary material.
+"""
+                # contentsに両ファイルとプロンプトを含める
+                contents = [main_uploaded, support_uploaded, prompt_text]
+            else:
+                # Mainのみの場合
+                prompt_text += f"\n\nContext Information:\nSource Filename: {main_filename}\nDocument Type: main\n"
+                contents = [main_uploaded, prompt_text]
+            
+            response = self.client.models.generate_content(
+                model=self.config.gemini_model,
+                contents=contents,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
+            )
+            
+            if not response.text:
+                raise ValueError("Empty response from Gemini")
+                
+            return json.loads(response.text)
+            
+        finally:
+            # 全てのアップロードファイルを削除
+            for uploaded_file in uploaded_files:
+                try:
+                    self.client.files.delete(name=uploaded_file.name)
+                    print(f"Deleted file resource: {uploaded_file.name}")
+                except Exception as e:
+                    print(f"Warning: Failed to delete file {uploaded_file.name}: {e}")
+

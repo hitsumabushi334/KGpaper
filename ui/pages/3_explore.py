@@ -221,7 +221,7 @@ else:
     color_labels = {
         "Paper": ("論文", colors["Paper"]),
         "Experiment": ("実験", colors["Experiment"]),
-        "method": ("手法", colors["method"]),
+        "method": ("実験方法", colors["method"]),
         "result": ("結果", colors["result"]),
         "discussion": ("考察", colors["discussion"]),
         "conclusion": ("結論", colors["conclusion"]),
