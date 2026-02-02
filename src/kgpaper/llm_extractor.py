@@ -37,7 +37,7 @@ class LLMExtractor:
             TimeoutError: If file processing exceeds timeout or max retries
             Exception: If file upload fails with an error state
         """
-        file = self.client.files.upload(path=file_path)
+        file = self.client.files.upload(file=file_path)
         print(f"Uploaded file: {file.name} ({file.uri})")
 
         # Wait for processing state with timeout and retry limit

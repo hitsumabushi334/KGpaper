@@ -27,7 +27,7 @@ paper_titles = ["All"] + [p["title"] for p in papers]
 paper_title_selected = st.sidebar.selectbox("Paper Title", paper_titles)
 paper_title = paper_title_selected if paper_title_selected != "All" else None
 
-document_type = st.sidebar.selectbox("Document Type", ["All", "main", "support"])
+source_context = st.sidebar.selectbox("Source Context", ["All", "Main", "Support"])
 # Experiment TypeはURI形式（kg:Synthesis等）に対応
 experiment_type = st.sidebar.selectbox(
     "Experiment Type",
@@ -35,11 +35,14 @@ experiment_type = st.sidebar.selectbox(
         "All",
         "kg:Synthesis",
         "kg:Characterization",
-        "kg:Electrochemical",
         "kg:Spectroscopy",
-        "kg:Thermal",
-        "kg:Mechanical",
+        "kg:Electrochemical",
+        "kg:PerformanceTesting",
         "kg:Computational",
+        "kg:Imaging",
+        "kg:Kinetic",
+        "kg:Thermodynamic",
+        "kg:Mechanical",
         "kg:Biological",
         "kg:Other",
     ],
@@ -55,13 +58,13 @@ if not st.session_state.explore_initialized:
 
 # Searchボタンクリック時はフィルター条件で再検索
 if st.sidebar.button("Search", type="primary"):
-    doc_type_filter = document_type if document_type != "All" else None
+    source_context_filter = source_context if source_context != "All" else None
     experiment_type_filter = experiment_type if experiment_type != "All" else None
     content_type_filter = content_type if content_type != "All" else None
 
     st.session_state.explore_results = sq.search(
         paper_title=paper_title,
-        document_type=doc_type_filter,
+        source_context=source_context_filter,
         experiment_type=experiment_type_filter,
         content_type=content_type_filter,
     )
@@ -75,8 +78,11 @@ else:
 
     # Display Data
     df = pd.DataFrame(results)
-    # Select columns to display
-    display_cols = ["paper_title", "experiment_type", "content_type", "text"]
+    # Select columns to display (handle missing source_context for old data)
+    display_cols = ["paper_title", "experiment_type", "content_type"]
+    if "source_context" in df.columns:
+        display_cols.append("source_context")
+    display_cols.append("text")
     st.dataframe(df[display_cols], use_container_width=True)
 
     # Visualization

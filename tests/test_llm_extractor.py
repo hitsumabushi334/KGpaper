@@ -177,7 +177,7 @@ storage:
             result = extractor.upload_file("test.pdf")
 
             assert result == mock_file
-            mock_client.files.upload.assert_called_once_with(path="test.pdf")
+            mock_client.files.upload.assert_called_once_with(file="test.pdf")
 
             captured = capsys.readouterr()
             assert "Uploaded file: test-file-name" in captured.out

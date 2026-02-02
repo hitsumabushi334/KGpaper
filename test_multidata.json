@@ -290,7 +290,7 @@
         },
         {
           "@type": "kg:Experiment",
-          "experimentType": "kg:Thermal",
+          "experimentType": "kg:Thermodynamic",
           "hasContent": [
             {
               "@type": "kg:Method",

@@ -1,0 +1,228 @@
+{
+  "@context": {
+    "kg": "http://example.org/kgpaper/",
+    "Experiment": "kg:Experiment",
+    "paperTitle": "kg:paperTitle",
+    "paperDOI": "kg:paperDOI",
+    "hasExperiment": "kg:hasExperiment",
+    "experimentType": "kg:experimentType",
+    "hasContent": "kg:hasContent",
+    "contentType": "kg:contentType",
+    "sourceContext": "kg:sourceContext",
+    "text": "kg:text",
+    "sourceFile": "kg:sourceFile",
+    "documentType": "kg:documentType"
+  },
+  "@id": "urn:uuid:7f6d4a21-9e8c-4b5a-9d21-f0e2609c1208",
+  "@type": "kg:Paper",
+  "paperTitle": "Dye-Sensitized Photoelectrosynthesis Cells for Benzyl Alcohol Oxidation Using a Zinc Porphyrin Sensitizer and TEMPO Catalyst",
+  "paperDOI": "10.1021/acscatal.1c02609",
+  "sourceFile": "ja4c06461_si_001.pdf",
+  "documentType": "main",
+  "hasExperiment": [
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Synthesis",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "sourceContext": ["Main", "Support"],
+          "text": "Synthesis of ZnP-TEMPO dyads. HO2C-ZnP-CO2H was prepared according to literature. Amide coupling was performed using NH2-TEMPO with HATU as a coupling reagent in dry DMF to yield HO2C-ZnP-TEMPO (30% yield). This was subsequently converted to the hydroxamic acid derivative, hyd-ZnP-TEMPO, using hydroxylamine hydrochloride and HATU in dry DMF (80% yield). Reference compounds hyd-ZnP and ac-TEMPO were also prepared."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "sourceContext": ["Support"],
+          "text": "Product identity confirmed via 1H and 13C NMR (Figures S26-S34) and MALDI-TOF mass spectrometry. HO2C-ZnP-TEMPO: calcd for C61H58N6O4Zn [M+H]+ 1002.3811, found 1002.3863. hyd-ZnP-TEMPO: calcd for C61H59N7O4Zn [M+H]+ 1017.3920, found 1017.3982."
+        }
+      ]
+    },
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Characterization",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "sourceContext": ["Main", "Support"],
+          "text": "Steady-state absorption and emission spectra recorded in THF. Electrochemical properties were measured via cyclic voltammetry on meso-ITO electrodes in acetonitrile with 0.1 M LiClO4."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "sourceContext": ["Main"],
+          "text": "Absorbance: Soret band at 426 nm, Q bands at 555 and 598 nm. Emission: peaks at 607 and 656 nm. E0-0 = 2.06 eV. Oxidation potentials: TEMPO moiety at ~0.73 V vs SCE, ZnP moiety at 0.79-0.86 V vs SCE. Driving force for hole shift (ΔGhs) estimated at -0.06 to -0.1 eV (Table 1)."
+        },
+        {
+          "@type": "kg:Discussion",
+          "contentType": "discussion",
+          "sourceContext": ["Main"],
+          "text": "The appended TEMPO moiety does not alter the absorption spectra of the ZnP, indicating no electronic communication in the ground state. The fluorescence is not quenched, suggesting TEMPO does not quench the porphyrin singlet excited state."
+        }
+      ]
+    },
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Spectroscopy",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "sourceContext": ["Main", "Support"],
+          "text": "Femtosecond (fs-ps) and nanosecond (ns-μs) transient absorption (TA) measurements on TiO2 films sensitized with hyd-ZnP-TEMPO or hyd-ZnP reference in borate buffer. Laser excitation at 550 nm (fs) or 532 nm (ns)."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "sourceContext": ["Main", "Support"],
+          "text": "Detection of ZnP radical cation (ZnP•+) formation (band at 405-410 nm). ZnP•+ rise time constants: 6.3 and 75 ps. Decay occurs on multiple timescales (2 ns, 50 ns, 10 μs). Hole shift from ZnP•+ to TEMPO confirmed via bimolecular experiments with maleic anhydride as electron acceptor, where TEMPO totally suppressed the ZnP•+ signal (Figure S15B)."
+        },
+        {
+          "@type": "kg:Conclusion",
+          "contentType": "conclusion",
+          "sourceContext": ["Main"],
+          "text": "Direct evidence that the hole shift from the oxidized sensitizer to the TEMPO catalyst is operative despite a weak driving force."
+        }
+      ]
+    },
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Electrochemical",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "sourceContext": ["Main", "Support"],
+          "text": "Photovoltaic performance evaluation in dye-sensitized solar cells (DSSCs) using an iodide/triiodide (I-/I3-) redox couple in acetonitrile. Simulated AM1.5 sunlight (100 mW/cm2)."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "sourceContext": ["Main"],
+          "text": "Dyads with TEMPO outperformed references. hyd-ZnP-TEMPO: Jsc = 3.45 ± 0.2 mA/cm2, Voc = 632 ± 5 mV, PCE = 1.65 ± 0.05%. HO2C-ZnP-TEMPO: Jsc = 4.3 ± 0.4 mA/cm2, Voc = 645 ± 10 mV, PCE = 2.00 ± 0.2% (Table 2)."
+        },
+        {
+          "@type": "kg:Discussion",
+          "contentType": "discussion",
+          "sourceContext": ["Main"],
+          "text": "Higher performance in dyads is attributed to a longer-lived charge-separated state resulting from the hole shift to TEMPO, which reduces the rate of charge recombination."
+        }
+      ]
+    },
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Electrochemical",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "sourceContext": ["Main", "Support"],
+          "text": "Photocatalytic oxidation of para-methoxybenzyl alcohol (50 mM) on TiO2 films in 0.1 M borate buffer at various pH (7.5, 8, 9, 10). Conditions: 1 sun white light (100 mW/cm2), SCE reference, Pt counter electrode."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "sourceContext": ["Main"],
+          "text": "Optimal pH = 8. For hyd-ZnP-TEMPO at pH 8: Photocurrent density (J) = 200 ± 50 μA/cm2, TON = 26 ± 4, TOF = 47 ± 7 h-1, Faradaic Efficiency (FE) = 82 ± 6% (Table 3). Onset potential for catalytic oxidation was 0.74 V vs SCE."
+        },
+        {
+          "@type": "kg:Discussion",
+          "contentType": "discussion",
+          "sourceContext": ["Main"],
+          "text": "Maximum rate reached at pH 8. Efficiency decreases at higher pH likely due to higher desorption/degradation rates of the photocatalyst."
+        }
+      ]
+    },
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Electrochemical",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "sourceContext": ["Main"],
+          "text": "Comparison of dye-catalyst dyad (hyd-ZnP-TEMPO) versus bi-component system (hyd-ZnP + ac-TEMPO) in acetonitrile electrolyte with 0.1 M N-methyl-imidazole (Me-Imd) and 50 mM para-methoxybenzyl alcohol."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "sourceContext": ["Main"],
+          "text": "hyd-ZnP-TEMPO: J = 100 ± 20 μA/cm2, TON = 13 ± 2, TOF = 24 ± 4 h-1, FE = 76 ± 8%. Bi-component system (1 mM ac-TEMPO): J = 120 ± 40 μA/cm2, FE = 85 ± 6%. However, TOF calculated per mole of ac-TEMPO in the bi-component system was very low (0.27 h-1) compared to the dyad."
+        },
+        {
+          "@type": "kg:Conclusion",
+          "contentType": "conclusion",
+          "sourceContext": ["Main"],
+          "text": "Covalent attachment provides significantly higher turnover frequency due to proximity and faster hole shift, and requires much less catalyst (84 nmol vs 7000 nmol)."
+        }
+      ]
+    },
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Electrochemical",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "sourceContext": ["Main"],
+          "text": "Substrate scope evaluation using hyd-ZnP-TEMPO for the oxidation of three different benzyl alcohol derivatives (50 mM) in borate buffer (pH 8)."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "sourceContext": ["Main"],
+          "text": "para-Methoxybenzyl alcohol: 0.20 ± 0.05 mA/cm2. Benzyl alcohol: 0.19 ± 0.08 mA/cm2. para-Trifluoromethyl benzyl alcohol: 0.50 ± 0.05 mA/cm2 (Table 4)."
+        },
+        {
+          "@type": "kg:Discussion",
+          "contentType": "discussion",
+          "sourceContext": ["Main"],
+          "text": "The higher current for the trifluoromethyl derivative is attributed to higher hydrophobicity, improving affinity to the organic environment of the sensitized photoanode."
+        }
+      ]
+    },
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Characterization",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "sourceContext": ["Main", "Support"],
+          "text": "Stability and anchor comparison between carboxylic acid (HO2C-) and hydroxamic acid (hyd-) anchoring groups on TiO2. Dye loading was quantified by desorption in 0.1 M Bu4NOH."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "sourceContext": ["Main", "Support"],
+          "text": "Dye loading: 84 ± 10 nmol/cm2 for hyd-ZnP-TEMPO, 110 ± 12 nmol/cm2 for hyd-ZnP. In acetonitrile, HO2C-ZnP-TEMPO desorbed within minutes, preventing measurement. hyd-ZnP-TEMPO remained stable enough for testing in organic solvent (Figure S24)."
+        },
+        {
+          "@type": "kg:Conclusion",
+          "contentType": "conclusion",
+          "sourceContext": ["Main"],
+          "text": "Hydroxamic acid provides a more robust binding to TiO2, crucial for stability in organic electrolytes where the dyes are soluble."
+        }
+      ]
+    },
+    {
+      "@type": "kg:Experiment",
+      "experimentType": "kg:Computational",
+      "hasContent": [
+        {
+          "@type": "kg:Method",
+          "contentType": "method",
+          "sourceContext": ["Main", "Support"],
+          "text": "Density Functional Theory (DFT) calculations using PBE0/6-311G(d,p) level with PCM solvent model (MeCN)."
+        },
+        {
+          "@type": "kg:Result",
+          "contentType": "result",
+          "sourceContext": ["Main", "Support"],
+          "text": "Calculated ionization potentials: 5.08 eV (ZnP) and 5.21 eV (TEMPO), yielding a driving force of -0.13 eV for hole shift. Spin density plots (Figure S11) show the unpaired electron is strictly confined to the TEMPO unit."
+        }
+      ]
+    }
+  ]
+}
