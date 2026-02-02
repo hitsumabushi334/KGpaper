@@ -152,7 +152,8 @@ def test_import_graph_turtle(graph_manager, tmp_path):
 @prefix kg: <http://example.org/kgpaper/> .
 
 <urn:uuid:imported> a kg:Paper ;
-    kg:paperTitle "Imported Paper" .
+    kg:paperTitle "Imported Paper" ;
+    kg:documentType "main" .
 """,
         encoding="utf-8",
     )
@@ -174,7 +175,8 @@ def test_import_graph_json_ld(graph_manager, tmp_path):
   "@context": {"kg": "http://example.org/kgpaper/"},
   "@id": "urn:uuid:json-imported",
   "@type": "kg:Paper",
-  "kg:paperTitle": "JSON Imported Paper"
+  "kg:paperTitle": "JSON Imported Paper",
+  "kg:documentType": "main"
 }""",
         encoding="utf-8",
     )
@@ -191,7 +193,9 @@ def test_import_graph_jsonld_extension(graph_manager, tmp_path):
         """{
   "@context": {"kg": "http://example.org/kgpaper/"},
   "@id": "urn:uuid:jsonld-imported",
-  "@type": "kg:Paper"
+  "@type": "kg:Paper",
+  "kg:paperTitle": "JSONLD Imported Paper",
+  "kg:documentType": "support"
 }""",
         encoding="utf-8",
     )
@@ -368,3 +372,93 @@ def test_validate_whitespace_only_paper_title(graph_manager):
         graph_manager.add_json_ld(data)
 
     assert "Paper title cannot be empty" in str(exc_info.value)
+
+
+def test_import_graph_missing_document_type(graph_manager, tmp_path):
+    """documentTypeがないPaperのインポートを拒否するテスト"""
+    rdf_file = tmp_path / "missing_type.ttl"
+    rdf_file.write_text(
+        """
+@prefix kg: <http://example.org/kgpaper/> .
+
+<urn:uuid:missing-type> a kg:Paper ;
+    kg:paperTitle "Paper Without Type" .
+""",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError) as exc_info:
+        graph_manager.import_graph(str(rdf_file))
+
+    assert "kg:documentType" in str(exc_info.value)
+
+
+def test_import_graph_missing_experiment_type(graph_manager, tmp_path):
+    """experimentTypeがないExperimentのインポートを拒否するテスト"""
+    rdf_file = tmp_path / "missing_exp_type.ttl"
+    rdf_file.write_text(
+        """
+@prefix kg: <http://example.org/kgpaper/> .
+
+<urn:uuid:paper1> a kg:Paper ;
+    kg:paperTitle "Test Paper" ;
+    kg:documentType "main" ;
+    kg:hasExperiment <urn:uuid:exp1> .
+
+<urn:uuid:exp1> a kg:Experiment .
+""",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError) as exc_info:
+        graph_manager.import_graph(str(rdf_file))
+
+    assert "kg:experimentType" in str(exc_info.value)
+
+
+def test_import_graph_missing_content_properties(graph_manager, tmp_path):
+    """contentTypeまたはtextがないContentのインポートを拒否するテスト"""
+    rdf_file = tmp_path / "missing_content.ttl"
+    rdf_file.write_text(
+        """
+@prefix kg: <http://example.org/kgpaper/> .
+
+<urn:uuid:paper1> a kg:Paper ;
+    kg:paperTitle "Test Paper" ;
+    kg:documentType "main" ;
+    kg:hasExperiment <urn:uuid:exp1> .
+
+<urn:uuid:exp1> a kg:Experiment ;
+    kg:experimentType kg:Synthesis ;
+    kg:hasContent <urn:uuid:cont1> .
+
+<urn:uuid:cont1> a kg:Method .
+""",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError) as exc_info:
+        graph_manager.import_graph(str(rdf_file))
+
+    # contentTypeかtextのどちらかがないエラー
+    assert "kg:contentType" in str(exc_info.value) or "kg:text" in str(exc_info.value)
+
+
+def test_get_all_papers_without_document_type(graph_manager):
+    """documentTypeがない論文も取得できるテスト（後方互換性）"""
+    # documentTypeなしでグラフに直接追加（バリデーションをバイパス）
+    from rdflib import URIRef, Literal
+    from kgpaper.ontology import KG
+
+    paper_uri = URIRef("urn:uuid:no-type-paper")
+    graph_manager.g.add((paper_uri, KG.Paper, Literal("Paper")))
+    graph_manager.g.add(
+        (paper_uri, URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), KG.Paper)
+    )
+    graph_manager.g.add((paper_uri, KG.paperTitle, Literal("Paper Without Type")))
+
+    papers = graph_manager.get_all_papers()
+
+    assert len(papers) == 1
+    assert papers[0]["title"] == "Paper Without Type"
+    assert papers[0]["type"] == ""  # OPTIONALなので空文字列

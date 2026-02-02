@@ -48,8 +48,8 @@ class SparqlQuery:
         SELECT ?paper ?title ?docType ?exp ?expType ?cont ?contType ?text
         WHERE {{
             ?paper a kg:Paper ;
-                   kg:paperTitle ?title ;
-                   kg:documentType ?docType .
+                   kg:paperTitle ?title .
+            OPTIONAL {{ ?paper kg:documentType ?docType }}
             
             ?paper kg:hasExperiment ?exp .
             ?exp kg:experimentType ?expType .
@@ -69,7 +69,7 @@ class SparqlQuery:
             data.append({
                 "paper_uri": str(row.paper),
                 "paper_title": str(row.title),
-                "document_type": str(row.docType),
+                "document_type": str(row.docType) if row.docType else "",
                 "experiment_uri": str(row.exp),
                 "experiment_type": str(row.expType).split("/")[-1], # Simplify
                 "content_uri": str(row.cont),

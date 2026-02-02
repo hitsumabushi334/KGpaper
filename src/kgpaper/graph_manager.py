@@ -44,6 +44,30 @@ class GraphManager:
             raise ValueError("Paper title cannot be empty")
         return title.strip()
 
+    # 各エンティティの必須プロパティ
+    REQUIRED_PROPERTIES = {
+        "kg:Paper": ["kg:paperTitle", "kg:documentType"],
+        "kg:Experiment": ["kg:experimentType"],
+        "kg:Method": ["kg:contentType", "kg:text"],
+        "kg:Result": ["kg:contentType", "kg:text"],
+        "kg:Discussion": ["kg:contentType", "kg:text"],
+        "kg:Conclusion": ["kg:contentType", "kg:text"],
+    }
+
+    def _validate_required_properties(self, graph: Graph):
+        """全エンティティの必須プロパティをチェック"""
+        for entity_type, props in self.REQUIRED_PROPERTIES.items():
+            for prop in props:
+                query = f"""
+                    SELECT ?entity WHERE {{
+                        ?entity a {entity_type} .
+                        FILTER NOT EXISTS {{ ?entity {prop} ?val }}
+                    }}
+                """
+                missing = list(graph.query(query, initNs=PREFIXES))
+                if missing:
+                    raise ValueError(f"{entity_type} must have {prop}")
+
     def add_json_ld(self, json_data: dict):
         """Adds JSON-LD data to the graph."""
         # Check if @context is present, if not, might need to inject or assume
@@ -97,9 +121,14 @@ class GraphManager:
             for row in temp_graph.query(query, initNs=PREFIXES):
                 self._validate_paper_title(str(row.title))
 
+            # 必須プロパティのバリデーション
+            self._validate_required_properties(temp_graph)
+
             # バリデーション成功後、本グラフに追加
             self.g.parse(file_path, format=format)
             self.save_graph()
+        except ValueError:
+            raise  # バリデーションエラーはそのまま再送出
         except Exception as e:
             raise ValueError(f"Failed to import graph: {e}")
 
@@ -169,8 +198,8 @@ class GraphManager:
         SELECT ?paper ?title ?type ?source
         WHERE {
             ?paper a kg:Paper ;
-                   kg:paperTitle ?title ;
-                   kg:documentType ?type .
+                   kg:paperTitle ?title .
+            OPTIONAL { ?paper kg:documentType ?type }
             OPTIONAL { ?paper kg:sourceFile ?source }
         }
         """
@@ -179,7 +208,7 @@ class GraphManager:
             {
                 "uri": str(row.paper),
                 "title": str(row.title),
-                "type": str(row.type),
+                "type": str(row.type) if row.type else "",
                 "source": str(row.source) if row.source else "",
             }
             for row in results
