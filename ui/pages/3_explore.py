@@ -106,11 +106,14 @@ else:
 
         # Paper Node
         if p_uri not in nodes:
+            # タイトルを最大30文字に制限
+            p_label = p_title[:30] + "..." if len(p_title) > 30 else p_title
             elements.append(
                 {
                     "data": {
                         "id": p_uri,
-                        "label": p_title,
+                        "label": p_label,
+                        "full_title": p_title,
                         "type": "Paper",
                         "color": colors["Paper"],
                     }
@@ -182,6 +185,8 @@ else:
                 "color": "white",
                 "text-outline-width": 1,
                 "text-outline-color": "#333",
+                "text-max-width": "100px",
+                "text-wrap": "ellipsis",
             },
         },
         {
@@ -200,13 +205,66 @@ else:
         },
     ]
 
-    cytoscape(
+    # グラフ表示と選択状態の取得
+    selected = cytoscape(
         elements,
         stylesheet,
         key="graph",
         layout={"name": "cose", "animate": True},
         height="600px",
+        selection_type="single",
     )
+
+    # 色凡例の表示
+    st.markdown("### Node Colors Legend")
+    legend_cols = st.columns(6)
+    color_labels = {
+        "Paper": ("論文", colors["Paper"]),
+        "Experiment": ("実験", colors["Experiment"]),
+        "method": ("手法", colors["method"]),
+        "result": ("結果", colors["result"]),
+        "discussion": ("考察", colors["discussion"]),
+        "conclusion": ("結論", colors["conclusion"]),
+    }
+    for idx, (key, (lbl, clr)) in enumerate(color_labels.items()):
+        with legend_cols[idx]:
+            st.markdown(
+                f'<div style="display:flex;align-items:center;">'
+                f'<div style="width:16px;height:16px;background:{clr};'
+                f'border-radius:4px;margin-right:8px;"></div>'
+                f"<span>{lbl}</span></div>",
+                unsafe_allow_html=True,
+            )
+
+    # 選択されたノードに関連するコンテンツをサブテーブルで表示
+    if selected and selected.get("nodes"):
+        selected_id = selected["nodes"][0]
+
+        # 選択されたノードが所属する実験URIを特定
+        target_experiment_uri = None
+        for item in results:
+            if selected_id in [
+                item["paper_uri"],
+                item["experiment_uri"],
+                item["content_uri"],
+            ]:
+                target_experiment_uri = item["experiment_uri"]
+                break
+
+        if target_experiment_uri:
+            # 同一実験に属する全コンテンツをフィルタリング
+            related_items = [
+                item
+                for item in results
+                if item["experiment_uri"] == target_experiment_uri
+            ]
+
+            if related_items:
+                st.subheader("📋 選択されたノードの関連コンテンツ")
+                related_df = pd.DataFrame(related_items)
+                # PaperNameを除外し、可読性を向上
+                display_cols_sub = ["experiment_type", "content_type", "text"]
+                st.dataframe(related_df[display_cols_sub], use_container_width=True)
 
     # Export
     st.subheader("Export")
