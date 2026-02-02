@@ -1,0 +1,418 @@
+{
+  "@context": {
+    "kg": "http://example.org/kgpaper/",
+    "Experiment": "kg:Experiment",
+    "paperTitle": "kg:paperTitle",
+    "paperDOI": "kg:paperDOI",
+    "hasPaper": "kg:hasPaper",
+    "hasExperiment": "kg:hasExperiment",
+    "experimentType": "kg:experimentType",
+    "hasContent": "kg:hasContent",
+    "contentType": "kg:contentType",
+    "text": "kg:text",
+    "sourceFile": "kg:sourceFile",
+    "documentType": "kg:documentType"
+  },
+  "@id": "urn:uuid:2d5f0d5c-1ad4-4f13-8c77-0f9d5c0b7a1b",
+  "@type": "kg:PaperCorpus",
+  "hasPaper": [
+    {
+      "@id": "urn:uuid:8a7e2d73-6e86-4c9b-8f6a-2f0a9d1f1a01",
+      "@type": "kg:Paper",
+      "paperTitle": "Visible-Light Photoanodic Oxidation of SO2 with Iodide Mediation on Metal Dichalcogenides (Sample)",
+      "paperDOI": "10.0000/sample.photoelectro.2026.101",
+      "sourceFile": "paper01_main.pdf",
+      "documentType": "main",
+      "hasExperiment": [
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Electrochemical",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "Photoelectrochemical measurements were carried out in a three-electrode configuration with n-type MoS2 as the working electrode, Pt mesh as the counter electrode, and Ag/AgCl as the reference electrode. The electrolyte was 1.0 M H2SO4 saturated with SO2. Iodide was added as KI (typically 5–20 mM). Illumination was provided by visible light (cutoff > 1.1 eV) at fixed intensity. Linear sweep voltammetry (10 mV s−1) and chopped-light chronoamperometry were recorded. Potentials are reported vs NHE after conversion."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "Under illumination without iodide, the anodic photocurrent at 0.60 V vs NHE was 0.35 mA cm−2. With 10 mM iodide, the photocurrent increased to 1.10 mA cm−2 and the apparent onset potential shifted cathodically by ~120 mV. Product analysis of the electrolyte after 30 min operation indicated sulfate formation consistent with SO2 oxidation. Dark currents remained low (<0.05 mA cm−2) up to 0.60 V."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The iodide/tri-iodide couple likely mediates hole transfer from the illuminated MoS2 surface to SO2, reducing interfacial kinetic limitations. The cathodic shift in onset is consistent with a catalytic pathway in which I− is oxidized to I3− (or I2) at the photoanode and subsequently re-reduced by SO2 in solution. The low dark current suggests that the enhancement is primarily photodriven rather than purely electrocatalytic."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "Iodide mediation significantly enhances visible-light photoanodic SO2 oxidation on MoS2, increasing photocurrent and lowering the effective onset potential under the tested acidic conditions."
+            }
+          ]
+        },
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Spectroscopy",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "UV–Vis spectra of the acidic electrolyte were collected before and after photoelectrochemical operation using quartz cuvettes (1 cm). Iodide-containing solutions (10 mM KI in 1.0 M H2SO4) were sampled immediately after 30 min illumination/electrolysis. Baselines were corrected with iodide-free acid."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "After operation, new absorption features appeared near 290–360 nm consistent with formation of I3− in acidic media, while the pre-operation solution showed only weak background absorption in the same region."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The emergence of I3−-like features supports a redox-mediator cycle in which iodide is oxidized during illumination. The spectral changes correlate with photocurrent enhancement, indicating that mediator speciation is coupled to performance."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "Spectral signatures consistent with I3− formation are observed after photoelectrochemical operation, supporting iodide-mediated charge-transfer pathways."
+            }
+          ]
+        },
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Characterization",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "MoS2 electrodes were characterized before and after operation by Raman spectroscopy (532 nm excitation) and scanning electron microscopy (SEM). Raman peak positions (E2g and A1g modes) were tracked to assess structural changes."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "Raman spectra showed no significant shift in the characteristic MoS2 modes within ±2 cm−1 after 30 min operation. SEM images revealed no macroscopic delamination; surface roughness was qualitatively unchanged."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The absence of strong Raman shifts suggests that the short-term iodide-mediated operation does not substantially alter MoS2 crystallinity. This supports the interpretation that performance gains arise from interfacial redox mediation rather than irreversible electrode transformation under the tested timescale."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "Basic structural characterization indicates no major degradation of MoS2 after short photoelectrochemical runs under iodide mediation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@id": "urn:uuid:1c90f1a7-0f7b-4b85-9df2-0e0f1a4f8b22",
+      "@type": "kg:Paper",
+      "paperTitle": "Supporting Information for: Visible-Light Photoanodic Oxidation of SO2 with Iodide Mediation on Metal Dichalcogenides (Sample)",
+      "paperDOI": "10.0000/sample.photoelectro.2026.101",
+      "sourceFile": "paper01_support.pdf",
+      "documentType": "support",
+      "hasExperiment": [
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Electrochemical",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "Control experiments were performed by varying iodide concentration (0, 5, 10, 20 mM) and measuring chopped-light chronoamperometry at 0.60 V vs NHE. Each condition was repeated in triplicate with fresh electrolyte."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "Mean photocurrent densities at 0.60 V vs NHE were 0.34 ± 0.03 (0 mM), 0.78 ± 0.05 (5 mM), 1.12 ± 0.06 (10 mM), and 1.05 ± 0.08 mA cm−2 (20 mM). The enhancement saturated between 10 and 20 mM."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The saturation trend suggests that mediator transport or competing side reactions limit performance at higher iodide concentration. Variability across replicates remained small, indicating stable measurement conditions and reproducibility."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "Photocurrent enhancement increases with iodide concentration up to ~10 mM and then saturates under the tested conditions."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@id": "urn:uuid:bf2a3f3b-8b3d-4d2b-ae86-2b9f4a5c1c33",
+      "@type": "kg:Paper",
+      "paperTitle": "Low-Potential Oxidation in a Dye-Sensitized Photoelectrochemical Cell Enabled by a Cobalt Catalyst (Sample)",
+      "paperDOI": "10.0000/sample.dspec.2026.202",
+      "sourceFile": "paper02_main.pdf",
+      "documentType": "main",
+      "hasExperiment": [
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Synthesis",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "A cobalt complex (CoCat-1) was synthesized by combining ligand L (0.50 mmol) and Co(OAc)2·4H2O (0.50 mmol) in ethanol (20 mL) under nitrogen. The mixture was refluxed for 4 h, cooled to room temperature, and filtered. The solid was washed with cold ethanol and diethyl ether, then dried under vacuum. Purification was performed by recrystallization from acetonitrile/ether."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "CoCat-1 was isolated as a purple microcrystalline solid in 62% yield. Elemental analysis was consistent with the proposed formulation. ESI-MS showed a dominant ion corresponding to [CoCat-1]+. The complex was soluble in acetonitrile and stable for at least 24 h in the dark."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The synthesis provides a reproducible route to a cobalt catalyst compatible with polar aprotic media. The observed stability in acetonitrile is important for downstream electrochemical and DSPEC experiments."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "CoCat-1 can be prepared in moderate yield and exhibits sufficient solution stability for electrochemical testing in acetonitrile."
+            }
+          ]
+        },
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Electrochemical",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "Cyclic voltammetry of CoCat-1 (1.0 mM) was performed in acetonitrile with 0.1 M supporting electrolyte using glassy carbon (working), Pt wire (counter), and Ag/Ag+ (reference). Ferrocene was used as an internal standard, and potentials were converted to NHE. A substrate oxidation test was conducted with substrate S (10 mM) and mediator I−/I3− (5 mM) under identical conditions."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "CoCat-1 exhibited a reversible Co(III/II) couple at 0.44 V vs NHE. In the presence of substrate S, catalytic current increased markedly above 0.46 V, while the control without CoCat-1 showed only modest current. At 0.50 V, the current density increased from 0.40 to 1.25 mA cm−2 upon addition of CoCat-1."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The redox potential near 0.44 V vs NHE places CoCat-1 in a regime suitable for low-potential oxidation. The catalytic wave and increased current in the presence of substrate suggest a mediated electron-transfer mechanism, potentially involving rapid Co(III)-driven oxidation steps coupled to iodide mediation."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "CoCat-1 supports enhanced oxidation currents at low overpotential, with electrochemical signatures consistent with catalytic turnover near 0.44–0.50 V vs NHE."
+            }
+          ]
+        },
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Spectroscopy",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "Operando UV–Vis spectra were collected during controlled-potential electrolysis at 0.50 V vs NHE in a thin-layer electrochemical cell. Spectra were recorded every 60 s from 300–800 nm to monitor CoCat-1 and iodine-species evolution."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "A transient band assigned to oxidized cobalt species increased within the first 5 min and then plateaued, while features consistent with I3− gradually accumulated. No major baseline drift was observed over 30 min."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The time-resolved spectral evolution suggests rapid formation of an active oxidized cobalt state followed by steady-state mediator cycling. The gradual accumulation of I3− indicates incomplete back-reduction by substrate under these conditions, implying that mediator balance may limit long-duration operation."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "Operando spectroscopy supports formation of an oxidized cobalt intermediate and concurrent iodide/tri-iodide cycling during low-potential electrolysis."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@id": "urn:uuid:6d0c21f1-9f8f-4d7a-98c0-6c1d9c4f4a44",
+      "@type": "kg:Paper",
+      "paperTitle": "Additive-Controlled Stabilization of Iodide/Tri-iodide Mediators for Extended Electrolysis (Sample)",
+      "paperDOI": "10.0000/sample.mediator.2026.303",
+      "sourceFile": "paper03_main.pdf",
+      "documentType": "main",
+      "hasExperiment": [
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Electrochemical",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "Controlled-potential electrolysis was performed at 0.50 V vs NHE in acetonitrile containing I−/I3− mediator (5 mM total iodine) and substrate S (10 mM). An additive (Add-Y) was introduced at 0, 20, or 50 mM. Current-time traces were recorded for 2 h with stirring, using glassy carbon as the working electrode."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "Without Add-Y, current decayed to 35% of its initial value after 60 min. With 20 mM Add-Y, current retained 68% at 60 min; with 50 mM Add-Y, retention was 75%. HPLC conversion of substrate after 2 h increased from 41% (0 mM) to 59% (20 mM) and 62% (50 mM)."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "Add-Y improves long-term current retention and conversion, consistent with stabilization of iodine species and/or suppression of electrode fouling. The diminishing benefit from 20 to 50 mM suggests a saturation effect, possibly limited by mass transport or intrinsic mediator kinetics."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "Add-Y enhances the operational stability of iodide/tri-iodide mediated electrolysis, improving both current retention and substrate conversion over extended runs."
+            }
+          ]
+        },
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Spectroscopy",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "UV–Vis spectra of mediator solutions were recorded before electrolysis and after 2 h electrolysis under each additive concentration. Spectra were collected from 250–800 nm at identical path length and baseline correction procedures."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "The post-electrolysis spectra without Add-Y exhibited increased baseline and new broad absorbance extending to 500–650 nm. In contrast, Add-Y samples showed reduced baseline rise and a more defined I3−-like absorption pattern, indicating fewer strongly absorbing byproducts."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The reduced baseline rise suggests that Add-Y suppresses formation of insoluble or strongly absorbing decomposition products. This correlates with improved current retention, supporting the hypothesis that mediator degradation contributes to performance loss."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "Spectroscopy indicates reduced mediator/byproduct accumulation in the presence of Add-Y, consistent with enhanced electrolysis stability."
+            }
+          ]
+        },
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Thermal",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "Thermal stability of Add-Y was assessed by thermogravimetric analysis (TGA) under nitrogen at 10 °C min−1 from 25 to 600 °C to ensure compatibility with device processing constraints."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "Add-Y showed <2% mass loss up to 180 °C, followed by a major decomposition event centered near 310 °C."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The low mass loss below 180 °C indicates that Add-Y should tolerate typical low-temperature processing and handling steps. The higher-temperature decomposition is not expected to limit room-temperature electrochemical applications."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "Add-Y exhibits adequate thermal stability for use in room-temperature electrochemical systems and moderate-temperature processing workflows."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@id": "urn:uuid:9f8c2a2a-3d9a-4a6b-9c0e-1a2b3c4d5e66",
+      "@type": "kg:Paper",
+      "paperTitle": "Supporting Information for: Additive-Controlled Stabilization of Iodide/Tri-iodide Mediators (Sample)",
+      "paperDOI": "10.0000/sample.mediator.2026.303",
+      "sourceFile": "paper03_support.pdf",
+      "documentType": "support",
+      "hasExperiment": [
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Spectroscopy",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "Calibration curves for I3− were generated by preparing standard solutions (0.05–0.50 mM I3− equivalents) and measuring absorbance at a selected wavelength region attributed to I3−. Each point was measured in triplicate."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "A linear relationship was observed between absorbance and I3− concentration over the tested range (R2 = 0.995). The limit of quantification under these conditions was estimated at 0.02 mM."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The calibration supports semi-quantitative tracking of mediator speciation changes during long electrolysis experiments and enables comparison across additive conditions."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "UV–Vis calibration provides a practical method for estimating I3− accumulation and comparing mediator stability across formulations."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "@id": "urn:uuid:4b1a6e7c-2a0b-4c6f-9e6b-3f1d2c0a9b77",
+      "@type": "kg:Paper",
+      "paperTitle": "DFT Insights into Tri-iodide Adsorption on WS2 Edge Sites and Implications for Mediated Oxidation (Sample)",
+      "paperDOI": "10.0000/sample.dft.2026.404",
+      "sourceFile": "paper04_main.pdf",
+      "documentType": "main",
+      "hasExperiment": [
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Computational",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "Density functional theory (DFT) calculations were performed using periodic slab models of WS2 basal planes and representative edge terminations. Adsorption energies of I−, I2, and I3− were computed with dispersion corrections. Solvent effects were approximated via an implicit dielectric model. Charge transfer was analyzed using Bader partitioning and projected density of states."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "I3− adsorption was weak on basal planes (|Eads| < 0.15 eV) but substantially stronger at sulfur-vacancy-like edge motifs (|Eads| ~ 0.55 eV). Bader analysis indicated partial electron transfer from WS2 to adsorbed iodine species at edge sites, with increased density near the Fermi level upon adsorption."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "Preferential stabilization of I3− at edge motifs suggests that mediator speciation could be locally perturbed near catalytically active sites, affecting redox cycling kinetics. The computed charge-transfer signatures imply that certain edges may facilitate iodine redox interconversion, which could rationalize experimentally observed enhancements when iodide mediation is combined with dichalcogenide electrodes."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "DFT predicts that WS2 edge motifs can stabilize and electronically activate tri-iodide relative to basal planes, providing a mechanistic basis for iodine-mediated oxidation processes at dichalcogenide interfaces."
+            }
+          ]
+        },
+        {
+          "@type": "kg:Experiment",
+          "experimentType": "kg:Electrochemical",
+          "hasContent": [
+            {
+              "@type": "kg:Method",
+              "contentType": "method",
+              "text": "To connect computations with experiment, cyclic voltammetry of I−/I3− was recorded on WS2-coated electrodes and bare glassy carbon under identical electrolyte conditions. Scan rates from 20 to 200 mV s−1 were tested to probe kinetic differences."
+            },
+            {
+              "@type": "kg:Result",
+              "contentType": "result",
+              "text": "WS2-coated electrodes showed slightly reduced peak-to-peak separation for the iodine couple relative to bare glassy carbon, and higher peak currents at matched geometric area, consistent with faster interfacial kinetics and/or increased effective surface area."
+            },
+            {
+              "@type": "kg:Discussion",
+              "contentType": "discussion",
+              "text": "The reduced peak separation qualitatively aligns with the DFT prediction of stronger iodine interaction at reactive WS2 motifs. While geometric and morphological factors contribute, the combined computational and electrochemical evidence supports a model in which WS2 surfaces can facilitate iodine redox cycling relevant to mediated oxidation."
+            },
+            {
+              "@type": "kg:Conclusion",
+              "contentType": "conclusion",
+              "text": "Electrochemical signatures on WS2 are consistent with modestly enhanced iodine redox kinetics, supporting the mechanistic implications of the DFT results."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
