@@ -8,7 +8,9 @@ from kgpaper.sparql_query import SparqlQuery
 st.set_page_config(page_title="Explore & Visualize", page_icon="🔍", layout="wide")
 st.title("🔍 Explore Knowledge Graph")
 
-gm = GraphManager()
+from kgpaper.utils import get_graph_manager
+
+gm = get_graph_manager()
 sq = SparqlQuery(gm.g)
 
 # session_stateの初期化
