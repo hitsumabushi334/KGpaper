@@ -61,6 +61,16 @@ with tab1:
                     main_file_path=main_tmp_path, support_file_path=support_tmp_path
                 )
 
+                # デバッグ用: 抽出結果を表示
+                import json as json_module
+
+                with st.expander("🔍 Debug: LLM Output", expanded=False):
+                    st.write(f"Type: {type(json_ld)}")
+                    if isinstance(json_ld, dict):
+                        st.json(json_ld)
+                    else:
+                        st.code(str(json_ld)[:2000])
+
                 # バリデーション
                 try:
                     GraphManager.validate_json_ld_structure(json_ld)

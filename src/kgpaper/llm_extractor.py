@@ -188,7 +188,41 @@ Please process both files together as a single research paper, extracting inform
             if not response.text:
                 raise ValueError("Empty response from Gemini")
 
-            return json.loads(response.text)
+            # デバッグ用: LLMのレスポンスをログ出力
+            import logging
+
+            logger = logging.getLogger(__name__)
+            logger.info(f"LLM Response (first 500 chars): {response.text[:500]}")
+            logger.debug(f"LLM Full Response: {response.text}")
+
+            try:
+                parsed = json.loads(response.text)
+            except json.JSONDecodeError as e:
+                logger.error(f"JSON parse error: {e}")
+                logger.error(f"Raw response: {response.text}")
+                raise ValueError(
+                    f"Invalid JSON from LLM: {e}\nRaw response: {response.text[:1000]}"
+                )
+
+            # LLMが配列で返した場合のハンドリング
+            # プロンプトでは単一オブジェクトを期待しているが、LLMが[{...}]形式で返すことがある
+            if isinstance(parsed, list):
+                if len(parsed) == 0:
+                    raise ValueError("LLM returned empty array")
+                logger.warning(
+                    f"LLM returned array with {len(parsed)} elements, extracting first element"
+                )
+                parsed = parsed[0]
+
+            # 辞書型でない場合（リストなど）のエラーハンドリング
+            if not isinstance(parsed, dict):
+                logger.error(f"LLM returned non-dict type: {type(parsed)}")
+                logger.error(f"Raw response: {response.text}")
+                raise ValueError(
+                    f"LLM returned {type(parsed).__name__} instead of dict. Response: {response.text[:1000]}"
+                )
+
+            return parsed
 
         finally:
             # 全てのアップロードファイルを削除

@@ -39,8 +39,11 @@ class SparqlQuery:
             escaped_src = self._escape_sparql_string(source_context)
             filters.append(f'FILTER(CONTAINS(?srcCtx, "{escaped_src}"))')
         if experiment_type and experiment_type != "All":
-            # UIからはkg:Synthesis形式で来る。プレフィックスを付けてフィルタ
-            filters.append(f"FILTER(?expType = {experiment_type})")
+            # UIからはkg:Synthesis形式で来る。
+            # データがURIの場合（例: <.../Synthesis>）と、Literalの場合（例: "kg:Synthesis"）の両方に対応
+            filters.append(
+                f'FILTER(?expType = {experiment_type} || STR(?expType) = "{experiment_type}")'
+            )
         if content_type and content_type != "All":
             escaped_cont = self._escape_sparql_string(content_type)
             filters.append(f'FILTER(?contType = "{escaped_cont}")')
@@ -67,20 +70,36 @@ class SparqlQuery:
 
         results = self.g.query(query, initNs=PREFIXES)
 
-        data = []
+        # 集約用辞書: content_uri -> data dict
+        aggregated_data = {}
+
         for row in results:
-            data.append(
-                {
+            content_uri = str(row.cont)
+            src_ctx = str(row.srcCtx) if row.srcCtx else ""
+
+            if content_uri not in aggregated_data:
+                aggregated_data[content_uri] = {
                     "paper_uri": str(row.paper),
                     "paper_title": str(row.title),
                     "experiment_uri": str(row.exp),
-                    "experiment_type": str(row.expType).split("/")[-1],  # Simplify
-                    "content_uri": str(row.cont),
+                    "experiment_type": str(row.expType).split("/")[-1],
+                    "content_uri": content_uri,
                     "content_type": str(row.contType),
-                    "source_context": str(row.srcCtx) if row.srcCtx else "",
+                    "source_contexts": set(),  # Setで重複排除して集める
                     "text": str(row.text),
                 }
-            )
+
+            if src_ctx:
+                aggregated_data[content_uri]["source_contexts"].add(src_ctx)
+
+        # リスト形式に変換して返す
+        data = []
+        for item in aggregated_data.values():
+            # source_contextsをカンマ区切り文字列に変換
+            src_ctxs = sorted(list(item["source_contexts"]))
+            item["source_context"] = ", ".join(src_ctxs)
+            del item["source_contexts"]  # 中間データを削除
+            data.append(item)
 
         return data
 
